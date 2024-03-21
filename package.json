@@ -4,7 +4,7 @@
   "description": "In this repository i'm currently working on the implementation of the classic game Battleship, as part of \"The Odin Project\" curriculum. The focus of this project is on Test Driven Development (TDD), unit testing using Jest, and creating modular, well-structured code.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --watch"
   },
   "keywords": [],
   "author": "",
