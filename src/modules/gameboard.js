@@ -1,18 +1,17 @@
-/* eslint-disable class-methods-use-this */
 /* eslint-disable no-useless-catch */
 const Ship = require('./battleship.js');
 
 class Gameboard {
   constructor() {
     this.boardSize = 10;
-    this.grid = []; // Game board represented as a 2D-array
-    this.missedAttacks = null; // Keeps track of missed attacks
+    this.grid = []; // The game board represented as a 2D array
+    this.missedAttacks = null; // Tracks missed attacks, currently not used
     this.allShipsSunk = false; // Indicates whether all ships are sunk
 
     this.buildGameBoard(); // Initialize the game board
   }
 
-  // Builds de game board grid
+  // Builds the game board grid
   buildGameBoard() {
     for (let i = 0; i < this.boardSize; i++) {
       this.grid[i] = [];
@@ -38,23 +37,10 @@ class Gameboard {
       // Place ship on given coordinates
       this.grid[axisX][axisY] = new Ship(shipSize);
     } catch (error) {
-      // Stop excecution and throw custom error message
+      // Stop execution and throw a custom error message
       throw error;
     }
   }
-
-
-  //  Gameboards should have a receiveAttack function that takes a pair of coordinates,
-  //  determines whether or not the attack hit a ship and then sends the ‘hit’ function
-  //  to the correct ship, or records the coordinates of the missed shot.
-
-
-  //  Gameboards should keep track of missed attacks so they can display them properly.
-
-
-  //  Gameboards should be able to report whether or not all of their ships have been sunk.
 }
 
-const gameboard = new Gameboard();
-
-module.exports = gameboard;
+module.exports = Gameboard;
