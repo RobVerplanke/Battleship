@@ -90,8 +90,8 @@ describe('Gameboard', () => {
 
     gameBoard.placeShip(axisX, axisY, size, 'vertical'); // Orientation is vertical
 
-    for (let i = axisY; i < size; i++) {
-      expect(gameBoard.grid[axisX][axisY]).toEqual({ size: 5, hit: null, sunk: false });
+    for (let i = 0; i < size; i++) {
+      expect(gameBoard.grid[axisX][axisY + i]).toEqual({ size: 5, hit: null, sunk: false });
     }
     
   });
@@ -105,8 +105,8 @@ describe('Gameboard', () => {
 
     gameBoard.placeShip(axisX, axisY, size, 'horizontal'); // Orientation is horizontal
 
-    for (let i = axisX; i < size; i++) {
-      expect(gameBoard.grid[axisX][axisY]).toEqual({ size: 5, hit: null, sunk: false });
+    for (let i = 0; i < size; i++) {
+      expect(gameBoard.grid[axisX + i][axisY]).toEqual({ size: 5, hit: null, sunk: false });
     }
   });
 
