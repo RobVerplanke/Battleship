@@ -75,14 +75,20 @@ class Gameboard {
     }
   }
 
-  // receiveAttack() {
+  // sends the ‘hit’ function to the correct ship or records the coordinates of the missed shot
+  // Determines whether or not the attack hit a ship
+  receiveAttack(axisX, axisY) {
+    const ship = this.grid[axisX][axisY];
 
-  // }
+    if (ship !== 'empty') { // The attack hit a ship
+      ship.hit(); // Send 'hit' message to corresponding ship
+      return true;
+    }
 
-  // Gameboards should have a receiveAttack function that takes a pair of coordinates,
-  // determines whether or not the
-  // attack hit a ship and then sends the ‘hit’ function to the correct ship,
-  // or records the coordinates of the missed shot.
+    // Attack didn't hit any part of a ship
+    this.missedAttacks.push([axisX, axisY]); // Save coordinates of missed attack
+    return false;
+  }
 }
 
 module.exports = Gameboard;
