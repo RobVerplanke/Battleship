@@ -1,14 +1,16 @@
 /* global describe, it, expect */
 
 const Gameboard = require('../modules/gameboard.js');
+const Ship = require('../modules/battleship.js');
 
 // Mock Ship class
 jest.mock('../modules/battleship.js', () => {
   return jest.fn().mockImplementation((size) => {
     return {
       size: size,
-      hit: null,
-      sunk: false
+      hits: null,
+      sunk: false,
+      // hit: jest.fn()
     }
   })
 })
@@ -16,6 +18,7 @@ jest.mock('../modules/battleship.js', () => {
 beforeEach(() => {
     jest.clearAllMocks();
 });
+
 
 describe('Gameboard', () => {
 
@@ -26,6 +29,14 @@ describe('Gameboard', () => {
     
       expect(() => {
         gameBoard.placeShip(); // No arguments given
+      }).toThrow('Input is incomplete');
+    });
+
+    it('throws error when only one coordinate value is given', () => {
+      const gameBoard = new Gameboard();
+
+      expect(() => {
+        gameBoard.placeShip(1); // Only one argument given
       }).toThrow('Input is incomplete');
     });
 
@@ -113,7 +124,7 @@ describe('Gameboard', () => {
       gameBoard.placeShip(axisX, axisY, size, 'vertical'); // Orientation is vertical
 
       for (let i = 0; i < size; i++) {
-        expect(gameBoard.grid[axisX][axisY + i]).toEqual({ size: 5, hit: null, sunk: false });
+        expect(gameBoard.grid[axisX][axisY + i]).toEqual({ size: 5, hits: null, sunk: false });
       }
     });
 
@@ -127,7 +138,7 @@ describe('Gameboard', () => {
       gameBoard.placeShip(axisX, axisY, size, 'horizontal'); // Orientation is horizontal
 
       for (let i = 0; i < size; i++) {
-        expect(gameBoard.grid[axisX + i][axisY]).toEqual({ size: 5, hit: null, sunk: false });
+        expect(gameBoard.grid[axisX + i][axisY]).toEqual({ size: 5, hits: null, sunk: false });
       }
     });
 
@@ -141,7 +152,7 @@ describe('Gameboard', () => {
       gameBoard.placeShip(axisX, axisY, size, 'vertical'); // Orientation is vertical
 
       for (let i = 0; i < size; i++) {
-        expect(gameBoard.grid[axisX][axisY + i]).toEqual({ size: 5, hit: null, sunk: false });
+        expect(gameBoard.grid[axisX][axisY + i]).toEqual({ size: 5, hits: null, sunk: false });
       }
     });
 
@@ -155,7 +166,7 @@ describe('Gameboard', () => {
       gameBoard.placeShip(axisX, axisY, size, 'horizontal'); // Orientation is horizontal
 
       for (let i = 0; i < size; i++) {
-        expect(gameBoard.grid[axisX + 1][axisY]).toEqual({ size: 5, hit: null, sunk: false });
+        expect(gameBoard.grid[axisX + 1][axisY]).toEqual({ size: 5, hits: null, sunk: false });
       }
     });
     
@@ -201,6 +212,31 @@ describe('Gameboard', () => {
 
   describe('receiveAttack', () => {
 
+    it('should determine if a attack hits a ship', () => {
+      const gameBoard = new Gameboard();
+  
+      gameBoard.placeShip(1, 2, 3, 'horizontal'); // Place target
+
+      expect(gameBoard.receiveAttack(1, 2)).toBeTruthy(); // Hit the target
+    })
+
+    // it('should determine a attack missed a ship', () => {
+    //   const gameBoard = new Gameboard();
+  
+    //   gameBoard.placeShip(1, 2, 3, 'horizontal');  // Place target
+
+    //   expect(gameBoard.receiveAttack(1, 3)).toBeFalsy(); // Miss the target
+      
+    // })
+
+    // it('should send a "hit" to the corresponding ship', () => {
+    //   const gameBoard = new Gameboard();
+  
+    //   gameBoard.placeShip(1, 2, 3, 'horizontal'); // Place target
+    //   gameBoard.receiveAttack(1, 2); // Hit the ship
+
+    //   expect(ship.hit).toBe(1);
+    // })
   });
 
 });
