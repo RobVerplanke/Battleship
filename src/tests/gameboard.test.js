@@ -13,9 +13,9 @@ jest.mock('../modules/battleship.js', () => {
   })
 })
 
-// beforeEach(() => {
-//     jest.clearAllMocks();
-// });
+beforeEach(() => {
+    jest.clearAllMocks();
+});
 
 describe('Gameboard', () => {
 
@@ -30,52 +30,86 @@ describe('Gameboard', () => {
     }).toThrow('Input is empty');
   });
   
-  it('throws error when coordinate value is to low', () => {
+  it('throws error when a coordinate exceeds board boundries', () => {
     const gameBoard = new Gameboard();
-  
+    
     expect(() => {
-      gameBoard.placeShip(-1, 2, 1); // X-axis is -1
-      gameBoard.placeShip(1, 12, 1); // Y-axis is 12
+      gameBoard.placeShip(-1, 2, 1); // X-axis is to low
+      gameBoard.placeShip(1, 12, 1); // Y-axis is to high
     }).toThrow('Invalid coordinate');
   });
-
-  it('throws error when shipsize is invalid', () => {
+  
+  it('throws error when ship size is invalid', () => {
     const gameBoard = new Gameboard();
   
     expect(() => {
-      gameBoard.placeShip(1, 2, 0); // Ship size is 0
-      gameBoard.placeShip(1, 2, 6); // Ship size is 6
+      gameBoard.placeShip(1, 2, 1); // Size is to small
+      gameBoard.placeShip(1, 2, 6); // Size is to large
     }).toThrow('Invalid ship size');
   });
-
-  it('places a ship of size one at the correct coordinates when input is valid', () => {
+  
+  it('throws error when orientation is empty', () => {
     const gameBoard = new Gameboard();
 
-    gameBoard.placeShip(1, 2, 1, 'horizontal'); // (X-axis, Y-axis, ship size, orientation)
-
-    expect(gameBoard.grid[1][2]).toEqual({ size: 1, hit: null, sunk: false });
+    expect(() => {
+      gameBoard.placeShip(1, 2, 2, ''); // Orientation is empty
+    }).toThrow('Invalid orientation');
   });
 
-  it('can place a ship larger than size one vertically', () => {
+  it('throws error when orientation is undefined', () => {
     const gameBoard = new Gameboard();
 
-    gameBoard.placeShip(1, 2, 2, 'vertical'); // Orientation is vertical
+    expect(() => {
+      gameBoard.placeShip(1, 2, 2); // Orientation is undefined
+    }).toThrow('Invalid orientation');
+  });
+
+  it('throws error when orientation is invalid', () => {
+    const gameBoard = new Gameboard();
+
+    expect(() => {
+      gameBoard.placeShip(1, 2, 2, 'diagonal'); // Orientation is invalid
+    }).toThrow('Invalid orientation');
+  });
+
+  it('places a ship at the correct coordinates when input is valid', () => {
+    const gameBoard = new Gameboard();
+
+    gameBoard.placeShip(1, 2, 2, 'horizontal'); // (X-axis, Y-axis, size, orientation)
 
     expect(gameBoard.grid[1][2]).toEqual({ size: 2, hit: null, sunk: false });
-    expect(gameBoard.grid[1][3]).toEqual({ size: 2, hit: null, sunk: false });
+    expect(gameBoard.grid[2][2]).toEqual({ size: 2, hit: null, sunk: false });
   });
 
-  it('can place a ship larger than size one horizontally', () => {
+  it('can place a ship vertically', () => {
     const gameBoard = new Gameboard();
 
-    gameBoard.placeShip(1, 2, 5, 'horizontal'); // Orientation is vertical
+    const axisX = 1;
+    const axisY = 2;
+    const size = 5;
 
-    expect(gameBoard.grid[1][2]).toEqual({ size: 5, hit: null, sunk: false });
-    expect(gameBoard.grid[2][2]).toEqual({ size: 5, hit: null, sunk: false });
-    expect(gameBoard.grid[3][2]).toEqual({ size: 5, hit: null, sunk: false });
-    expect(gameBoard.grid[4][2]).toEqual({ size: 5, hit: null, sunk: false });
-    expect(gameBoard.grid[5][2]).toEqual({ size: 5, hit: null, sunk: false });
+    gameBoard.placeShip(axisX, axisY, size, 'vertical'); // Orientation is vertical
 
+    for (let i = axisY; i < size; i++) {
+      expect(gameBoard.grid[axisX][axisY]).toEqual({ size: 5, hit: null, sunk: false });
+    }
+    
   });
+
+  it('can place a ship horizontally', () => {
+    const gameBoard = new Gameboard();
+
+    const axisX = 1;
+    const axisY = 2;
+    const size = 5;
+
+    gameBoard.placeShip(axisX, axisY, size, 'horizontal'); // Orientation is horizontal
+
+    for (let i = axisX; i < size; i++) {
+      expect(gameBoard.grid[axisX][axisY]).toEqual({ size: 5, hit: null, sunk: false });
+    }
+  });
+
+  // Test if ship is placed within board boundries
 
 });

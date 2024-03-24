@@ -25,8 +25,8 @@ class Gameboard {
   validateInput(axisX, axisY, shipSize, orientation) {
     if (axisX === undefined || axisY === undefined || shipSize === undefined) throw new Error('Input is empty'); // Check for empty input
     if (axisX < 0 || axisX >= this.boardSize || axisY < 0 || axisY >= this.boardSize) throw new Error('Invalid coordinate'); // Check for invalid coordinates
-    if (shipSize <= 0 || shipSize > 5) throw new Error('Invalid ship size'); // Check for invalid ship size
-    if (orientation !== 'horizontal' && orientation !== 'vertical') throw new Error('Invald orientation');
+    if (shipSize < 2 || shipSize > 5) throw new Error('Invalid ship size'); // Check for invalid ship size
+    if (orientation !== 'horizontal' && orientation !== 'vertical') throw new Error('Invalid orientation');
   }
 
   // Adds a new ship instance to the grid at the specified coordinates with the given size
