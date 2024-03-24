@@ -5,7 +5,7 @@ class Gameboard {
   constructor() {
     this.boardSize = 10;
     this.grid = []; // The game board represented as a 2D array
-    this.missedAttacks = null; // Tracks missed attacks, currently not used
+    this.missedAttacks = []; // Tracks missed attacks
     this.allShipsSunk = false; // Indicates whether all ships are sunk
 
     this.buildGameBoard(); // Initialize the game board
@@ -22,20 +22,31 @@ class Gameboard {
   }
 
   // Validates input coordinates and ship size
-  validateInput(axisX, axisY, shipSize) {
+  validateInput(axisX, axisY, shipSize, orientation) {
     if (axisX === undefined || axisY === undefined || shipSize === undefined) throw new Error('Input is empty'); // Check for empty input
     if (axisX < 0 || axisX >= this.boardSize || axisY < 0 || axisY >= this.boardSize) throw new Error('Invalid coordinate'); // Check for invalid coordinates
     if (shipSize <= 0 || shipSize > 5) throw new Error('Invalid ship size'); // Check for invalid ship size
+    if (orientation !== 'horizontal' && orientation !== 'vertical') throw new Error('Invald orientation');
   }
 
   // Adds a new ship instance to the grid at the specified coordinates with the given size
-  placeShip(axisX, axisY, shipSize) {
+  placeShip(axisX, axisY, shipSize, orientation) {
     try {
       // Validate input values
-      this.validateInput(axisX, axisY, shipSize);
+      this.validateInput(axisX, axisY, shipSize, orientation);
+
+      const newShip = new Ship(shipSize);
 
       // Place ship on given coordinates
-      this.grid[axisX][axisY] = new Ship(shipSize);
+      if (orientation === 'horizontal') {
+        for (let i = 0; i < shipSize; i++) {
+          this.grid[axisX + i][axisY] = newShip;
+        }
+      } else if (orientation === 'vertical') {
+        for (let i = 0; i < shipSize; i++) {
+          this.grid[axisX][axisY + i] = newShip;
+        }
+      }
     } catch (error) {
       // Stop execution and throw a custom error message
       throw error;

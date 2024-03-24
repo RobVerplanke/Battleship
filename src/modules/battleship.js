@@ -1,8 +1,8 @@
 class Ship {
   constructor(size) {
-    this.size = size;
-    this.hit = null;
-    this.sunk = false;
+    this.size = size; // Length of ship
+    this.hit = null; // Tracks amount of attacks taken
+    this.sunk = false; // Indicates whether ship is sunk
   }
 
   // Increase number of hits taken
@@ -10,7 +10,7 @@ class Ship {
     this.hit++;
   }
 
-  // Return state of the sunk-property
+  // Checks if ship is sunk
   isSunk() {
     if (this.hit === this.size) return true; // Amount of hits is equal to ship size
     return false;

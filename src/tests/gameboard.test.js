@@ -13,6 +13,10 @@ jest.mock('../modules/battleship.js', () => {
   })
 })
 
+// beforeEach(() => {
+//     jest.clearAllMocks();
+// });
+
 describe('Gameboard', () => {
 
   describe('placeShip', () => {
@@ -30,40 +34,48 @@ describe('Gameboard', () => {
     const gameBoard = new Gameboard();
   
     expect(() => {
-      gameBoard.placeShip(-1, 2, 3); // X-axis is -1
+      gameBoard.placeShip(-1, 2, 1); // X-axis is -1
+      gameBoard.placeShip(1, 12, 1); // Y-axis is 12
     }).toThrow('Invalid coordinate');
   });
 
-  it('throws error when coordinate value is to high', () => {
-    const gameBoard = new Gameboard();
-  
-    expect(() => {
-      gameBoard.placeShip(1, 12, 3); // Y-axis is 12
-    }).toThrow('Invalid coordinate');
-  });
-
-  it('throws error when shipsize is to small', () => {
+  it('throws error when shipsize is invalid', () => {
     const gameBoard = new Gameboard();
   
     expect(() => {
       gameBoard.placeShip(1, 2, 0); // Ship size is 0
-    }).toThrow('Invalid ship size');
-  });
-
-  it('throws error when shipsize is to big', () => {
-    const gameBoard = new Gameboard();
-  
-    expect(() => {
       gameBoard.placeShip(1, 2, 6); // Ship size is 6
     }).toThrow('Invalid ship size');
   });
 
+  it('places a ship of size one at the correct coordinates when input is valid', () => {
+    const gameBoard = new Gameboard();
 
-  it('places a ship at the correct coordinates when input is valid', () => {
-      const gameBoard = new Gameboard();
+    gameBoard.placeShip(1, 2, 1, 'horizontal'); // (X-axis, Y-axis, ship size, orientation)
 
-      gameBoard.placeShip(1, 2, 3); // (X-axis, Y-axis, ship size)
+    expect(gameBoard.grid[1][2]).toEqual({ size: 1, hit: null, sunk: false });
+  });
 
-      expect(gameBoard.grid[1][2]).toEqual({ size: 3, hit: null, sunk: false });
-    });
+  it('can place a ship larger than size one vertically', () => {
+    const gameBoard = new Gameboard();
+
+    gameBoard.placeShip(1, 2, 2, 'vertical'); // Orientation is vertical
+
+    expect(gameBoard.grid[1][2]).toEqual({ size: 2, hit: null, sunk: false });
+    expect(gameBoard.grid[1][3]).toEqual({ size: 2, hit: null, sunk: false });
+  });
+
+  it('can place a ship larger than size one horizontally', () => {
+    const gameBoard = new Gameboard();
+
+    gameBoard.placeShip(1, 2, 5, 'horizontal'); // Orientation is vertical
+
+    expect(gameBoard.grid[1][2]).toEqual({ size: 5, hit: null, sunk: false });
+    expect(gameBoard.grid[2][2]).toEqual({ size: 5, hit: null, sunk: false });
+    expect(gameBoard.grid[3][2]).toEqual({ size: 5, hit: null, sunk: false });
+    expect(gameBoard.grid[4][2]).toEqual({ size: 5, hit: null, sunk: false });
+    expect(gameBoard.grid[5][2]).toEqual({ size: 5, hit: null, sunk: false });
+
+  });
+
 });
