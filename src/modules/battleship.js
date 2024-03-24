@@ -1,7 +1,7 @@
 class Ship {
   constructor(size) {
     this.size = size; // Length of ship
-    this.hit = null; // Tracks amount of attacks taken
+    this.hits = null; // Tracks amount of attacks taken
     this.sunk = false; // Indicates whether ship is sunk
   }
 
