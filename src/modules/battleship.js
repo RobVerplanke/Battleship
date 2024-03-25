@@ -1,6 +1,7 @@
 class Ship {
-  constructor(size) {
+  constructor(size, orientation) {
     this.size = size; // Length of ship
+    this.orientation = orientation; // Placed horizontally or vertically
     this.hits = null; // Tracks amount of attacks taken
     this.sunk = false; // Indicates whether ship is sunk
   }
