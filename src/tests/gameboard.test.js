@@ -33,7 +33,7 @@ describe('Gameboard', () => {
 
       expect(() => {
         gameBoard.placeShip(1, 2); // Size and orientation are undefined
-      }).toThrow('Input is incomplete');
+      }).toThrow('Invalid ship size');
     });
     
     it('throws error when a coordinate exceeds board boundaries', () => {
@@ -42,7 +42,7 @@ describe('Gameboard', () => {
       expect(() => {
         gameBoard.placeShip(-1, 2, 1); // X-axis is to low
         gameBoard.placeShip(1, 12, 1); // Y-axis is to high
-      }).toThrow('Invalid coordinate');
+      }).toThrow('Coordinate exceeds board boundaries');
     });
     
     it('throws error when coordinate is not a number', () => {
@@ -58,7 +58,7 @@ describe('Gameboard', () => {
     
       expect(() => {
         gameBoard.placeShip(1, 2, 'size', 'horizontal'); // Ship size is not a number
-      }).toThrow('Input is not a number');
+      }).toThrow('Invalid ship size');
     });
         
     it('throws error when ship size is invalid', () => {
@@ -209,7 +209,7 @@ describe('Gameboard', () => {
   
       expect(() => {
         gameBoard.receiveAttack(); // Input is empty
-      }).toThrow('Attack input is incomplete');
+      }).toThrow('Input is incomplete');
     })
 
     it('throws error if only one coordinate is given', () => {
@@ -217,7 +217,7 @@ describe('Gameboard', () => {
   
       expect(() => {
         gameBoard.receiveAttack(1); // Only one argument given
-      }).toThrow('Attack input is incomplete');
+      }).toThrow('Input is incomplete');
     })
 
     it('throws error if coordinates are not numbers', () => {
@@ -225,7 +225,7 @@ describe('Gameboard', () => {
   
       expect(() => {
         gameBoard.receiveAttack(1, 'axisY'); // Input contains not a number
-      }).toThrow('Attack input is not a number');
+      }).toThrow('Input is not a number');
     })
 
     it('throws error if coordinates are outside board boundaries', () => {
@@ -233,7 +233,7 @@ describe('Gameboard', () => {
   
       expect(() => {
         gameBoard.receiveAttack(11, 2); // Coordinate outside board
-      }).toThrow('Attack exceeds board boundaries');
+      }).toThrow('Coordinate exceeds board boundaries');
     })
 
     it('should return true when an attack hits target', () => {
@@ -258,7 +258,7 @@ describe('Gameboard', () => {
       const gameBoard = new Gameboard();
       const ship = new Ship(3);
 
-      const mockShip = jest.spyOn()
+      // const mockShip = jest.spyOn()
   
       gameBoard.placeShip(1, 2, 3, 'horizontal'); // Place target
       gameBoard.receiveAttack(1, 2); // Hit the ship

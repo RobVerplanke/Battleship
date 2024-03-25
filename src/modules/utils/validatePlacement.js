@@ -1,5 +1,5 @@
 // Check if the complete ship fits on the board at a given coordinate
-function checkPlacementBoardBoundries(gameBoard, axisX, axisY, shipSize, orientation) {
+function checkBoardBoundaries(gameBoard, axisX, axisY, shipSize, orientation) {
 
   if (orientation === 'horizontal' && axisX + shipSize > gameBoard) { // Exceeds horizontal board boundary
     throw new Error('Ship exceeds board limits');
@@ -11,7 +11,7 @@ function checkPlacementBoardBoundries(gameBoard, axisX, axisY, shipSize, orienta
 }
 
 // Check if the ship overlaps another placed ship
-function checkPlacementOverlap(gameBoard, axisX, axisY, shipSize, orientation) {
+function checkShipOverlap(gameBoard, axisX, axisY, shipSize, orientation) {
 
   for (let i = 0; i < shipSize; i++) { // Check the state of the cells in wich the ship is going to be placed
 
@@ -28,6 +28,6 @@ function checkPlacementOverlap(gameBoard, axisX, axisY, shipSize, orientation) {
 }
 
 module.exports = {
-  checkPlacementBoardBoundries,
-  checkPlacementOverlap,
+  checkBoardBoundaries,
+  checkShipOverlap,
 };

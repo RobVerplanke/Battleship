@@ -66,28 +66,20 @@ class Gameboard {
   // Check input, create a new ship instance and call method that directly adds it to the grid
   placeShip(axisX, axisY, shipSize, orientation) {
 
-    // Validate input values
+    // Check input values
     try {
 
-      /*
+      inputValidations.validateCoordinates(this.getBoardSize(), axisX, axisY); // Check if values are coordinates on the board
 
-      REFACTOR THIS:
-      */ inputValidations.validatePlacementInput(this.getBoardSize(), axisX, axisY, shipSize, orientation); /*
+      inputValidations.validateShipSize(shipSize); // Check if size of ship is valid
 
-      TO THIS:
+      inputValidations.validateOrientation(orientation); // Check if orientation is recognized
 
-      inputValidations.validateCoordinates(this.getBoardSize(), axisX, axisY);
+      // Placement: Prevent that ship is placed outside the board
+      placementValidations.checkBoardBoundaries(this.getBoardSize(), axisX, axisY, shipSize, orientation);
 
-      inputValidations.validateShipSize(shipSize);
-
-      inputValidations.validateOrientation(orientation);
-      */
-
-      // Prevent that ship is placed outside the board
-      placementValidations.checkPlacementBoardBoundries(this.getBoardSize(), axisX, axisY, shipSize, orientation);
-
-      // Prevent ship to overlap excisting ship
-      placementValidations.checkPlacementOverlap(this, axisX, axisY, shipSize, orientation);
+      // Placement: Prevent ship to overlap excisting ship
+      placementValidations.checkShipOverlap(this, axisX, axisY, shipSize, orientation);
 
     } catch (error) {
       // Stop execution and throw error message
@@ -105,7 +97,7 @@ class Gameboard {
     try {
 
       // Validate coordinates of the attack
-      inputValidations.validateAttackCoords(this.getBoardSize(), axisX, axisY);
+      inputValidations.validateCoordinates(this.getBoardSize(), axisX, axisY);
 
     } catch (error) {
       throw error;
