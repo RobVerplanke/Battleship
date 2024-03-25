@@ -36,7 +36,7 @@ describe('Gameboard', () => {
       }).toThrow('Input is incomplete');
     });
     
-    it('throws error when a coordinate exceeds board boundries', () => {
+    it('throws error when a coordinate exceeds board boundaries', () => {
       const gameBoard = new Gameboard();
       
       expect(() => {
@@ -158,15 +158,15 @@ describe('Gameboard', () => {
       }
     });
     
-    it('throws error if ship is placed outside of board boundries', () => {
+    it('throws error if ship is placed outside of board boundaries', () => {
       const gameBoard = new Gameboard();
 
       expect(() => {
-        gameBoard.placeShip(6, 2, 5, 'horizontal'); // Ship exceeds board boundries horizontally
+        gameBoard.placeShip(6, 2, 5, 'horizontal'); // Ship exceeds board boundaries horizontally
       }).toThrow('Ship exceeds board limits');
 
       expect(() => {
-        gameBoard.placeShip(1, 8, 3, 'vertical'); // Ship exceeds board boundries vertically
+        gameBoard.placeShip(1, 8, 3, 'vertical'); // Ship exceeds board boundaries vertically
       }).toThrow('Ship exceeds board limits');
     })
 
@@ -228,12 +228,12 @@ describe('Gameboard', () => {
       }).toThrow('Attack input is not a number');
     })
 
-    it('throws error if coordinates are outside board boundries', () => {
+    it('throws error if coordinates are outside board boundaries', () => {
       const gameBoard = new Gameboard();
   
       expect(() => {
         gameBoard.receiveAttack(11, 2); // Coordinate outside board
-      }).toThrow('Attack exceeds board boundries');
+      }).toThrow('Attack exceeds board boundaries');
     })
 
     it('should return true when an attack hits target', () => {
