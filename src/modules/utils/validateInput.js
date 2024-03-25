@@ -2,9 +2,8 @@
 
 // Check if coordinates are usable for placement
 function validateCoordinates(boardSize, axisX, axisY) {
-  if (axisX === undefined || axisY === undefined) throw new Error('Input is incomplete'); // Check for empty input
+  if (axisX === undefined || axisY === undefined || typeof axisX !== 'number' || typeof axisY !== 'number') throw new Error('Input is invalid'); // Check for valid datatype
   if (axisX < 0 || axisX >= boardSize || axisY < 0 || axisY >= boardSize) throw new Error('Coordinate exceeds board boundaries'); // Check for invalid coordinates
-  if (typeof axisX !== 'number' || typeof axisY !== 'number') throw new Error('Input is not a number'); // Check for valid datatype
 }
 
 // Check if ship has the correct size

@@ -62,18 +62,16 @@ class Gameboard {
     }
   }
 
-
   // Check input, create a new ship instance and call method that directly adds it to the grid
   placeShip(axisX, axisY, shipSize, orientation) {
 
-    // Check input values
-    try {
+    try { // Validate arguments
 
-      inputValidations.validateCoordinates(this.getBoardSize(), axisX, axisY); // Check if values are coordinates on the board
+      inputValidations.validateCoordinates(this.getBoardSize(), axisX, axisY); // Check if values are valid coordinates on the board
 
       inputValidations.validateShipSize(shipSize); // Check if size of ship is valid
 
-      inputValidations.validateOrientation(orientation); // Check if orientation is recognized
+      inputValidations.validateOrientation(orientation); // Check if orientation is valid
 
       // Placement: Prevent that ship is placed outside the board
       placementValidations.checkBoardBoundaries(this.getBoardSize(), axisX, axisY, shipSize, orientation);
@@ -90,15 +88,12 @@ class Gameboard {
     this.addShipToGrid(axisX, axisY, shipSize, orientation);
   }
 
-
   // Determine whether a attack was succesful or not.
   // In case of a hit tell the ship it is hit, else store the coordinates of the missed attack
   receiveAttack(axisX, axisY) {
-    try {
 
-      // Validate coordinates of the attack
+    try { // Check if values are valid coordinates on the board
       inputValidations.validateCoordinates(this.getBoardSize(), axisX, axisY);
-
     } catch (error) {
       throw error;
     }

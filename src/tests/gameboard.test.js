@@ -17,7 +17,7 @@ describe('Gameboard', () => {
     
       expect(() => {
         gameBoard.placeShip(); // No arguments given
-      }).toThrow('Input is incomplete');
+      }).toThrow('Input is invalid');
     });
 
     it('throws error when only one coordinate value is given', () => {
@@ -25,7 +25,7 @@ describe('Gameboard', () => {
 
       expect(() => {
         gameBoard.placeShip(1); // Only one argument given
-      }).toThrow('Input is incomplete');
+      }).toThrow('Input is invalid');
     });
 
     it('throws error when no size and orientation are given', () => {
@@ -44,23 +44,7 @@ describe('Gameboard', () => {
         gameBoard.placeShip(1, 12, 1); // Y-axis is to high
       }).toThrow('Coordinate exceeds board boundaries');
     });
-    
-    it('throws error when coordinate is not a number', () => {
-      const gameBoard = new Gameboard();
-    
-      expect(() => {
-        gameBoard.placeShip('axisX', 'axisY', 5, 'horizontal'); // Coordinate is not a number
-      }).toThrow('Input is not a number');
-    });
-
-    it('throws error when size is not a number', () => {
-      const gameBoard = new Gameboard();
-    
-      expect(() => {
-        gameBoard.placeShip(1, 2, 'size', 'horizontal'); // Ship size is not a number
-      }).toThrow('Invalid ship size');
-    });
-        
+  
     it('throws error when ship size is invalid', () => {
       const gameBoard = new Gameboard();
     
@@ -100,6 +84,22 @@ describe('Gameboard', () => {
       expect(() => {
         gameBoard.placeShip(1, 2, 3, 4); // Orientation is a number
       }).toThrow('Invalid orientation');
+    });
+
+    it('throws error when size is not a number', () => {
+      const gameBoard = new Gameboard();
+    
+      expect(() => {
+        gameBoard.placeShip(1, 2, 'size', 'horizontal'); // Ship size is not a number
+      }).toThrow('Invalid ship size');
+    });
+              
+    it('throws error when coordinate is not a number', () => {
+      const gameBoard = new Gameboard();
+    
+      expect(() => {
+        gameBoard.placeShip('axisX', 'axisY', 5, 'horizontal'); // Coordinates are not number
+      }).toThrow('Input is invalid');
     });
 
     it('can place a ship vertically', () => {
@@ -209,23 +209,41 @@ describe('Gameboard', () => {
   
       expect(() => {
         gameBoard.receiveAttack(); // Input is empty
-      }).toThrow('Input is incomplete');
+      }).toThrow('Input is invalid');
+    })
+
+    it('throws error if input is a space', () => {
+      const gameBoard = new Gameboard();
+  
+      expect(() => {
+        gameBoard.receiveAttack(' '); // Value is a space
+      }).toThrow('Input is invalid');
     })
 
     it('throws error if only one coordinate is given', () => {
       const gameBoard = new Gameboard();
   
       expect(() => {
-        gameBoard.receiveAttack(1); // Only one argument given
-      }).toThrow('Input is incomplete');
+        gameBoard.receiveAttack(1); // Only one coordinate
+      }).toThrow('Input is invalid');
     })
 
-    it('throws error if coordinates are not numbers', () => {
+    it('throws error if input is not a number', () => {
       const gameBoard = new Gameboard();
   
       expect(() => {
-        gameBoard.receiveAttack(1, 'axisY'); // Input contains not a number
-      }).toThrow('Input is not a number');
+        gameBoard.receiveAttack('axisX'); // One value which is not a number
+        gameBoard.receiveAttack('axisX', 'axisY'); // Two values are not numbers
+      }).toThrow('Input is invalid');
+    })
+
+    it('throws error if one coordinate is not a number', () => {
+      const gameBoard = new Gameboard();
+  
+      expect(() => {
+        gameBoard.receiveAttack(1, 'axisY'); // Second value is not a number
+        gameBoard.receiveAttack('axisX', 2); // First value is not a number
+      }).toThrow('Input is invalid');
     })
 
     it('throws error if coordinates are outside board boundaries', () => {
@@ -233,6 +251,9 @@ describe('Gameboard', () => {
   
       expect(() => {
         gameBoard.receiveAttack(11, 2); // Coordinate outside board
+        gameBoard.receiveAttack(1, 12); // Coordinate outside board
+        gameBoard.receiveAttack(-1, 2); // Coordinate outside board
+        gameBoard.receiveAttack(1, -2); // Coordinate outside board
       }).toThrow('Coordinate exceeds board boundaries');
     })
 
