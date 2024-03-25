@@ -1,5 +1,7 @@
 /* eslint-disable no-useless-catch */
+
 const Ship = require('./battleship.js');
+const inputValidations = require('./inputValidations.js');
 
 class Gameboard {
   constructor() {
@@ -11,7 +13,7 @@ class Gameboard {
     this.buildGameBoard(); // Initialize the game board
   }
 
-  // Builds the game board grid
+  // Build the game board grid as a 2D-array
   buildGameBoard() {
     for (let i = 0; i < this.boardSize; i++) {
       this.grid[i] = [];
@@ -21,68 +23,86 @@ class Gameboard {
     }
   }
 
-  // Validates coordinate, ship size and orientation arguments
-  validateInput(axisX, axisY, shipSize, orientation) {
-    if (axisX === undefined || axisY === undefined || shipSize === undefined) throw new Error('Input is incomplete'); // Check for empty input
-    if (axisX < 0 || axisX >= this.boardSize || axisY < 0 || axisY >= this.boardSize) throw new Error('Invalid coordinate'); // Check for invalid coordinates
-    if (typeof axisX !== 'number' || typeof axisY !== 'number' || typeof shipSize !== 'number') throw new Error('Input is not a number'); // Check for valid datatype
-    if (shipSize < 2 || shipSize > 5) throw new Error('Invalid ship size'); // Check for invalid ship size
-    if (orientation !== 'horizontal' && orientation !== 'vertical') throw new Error('Invalid orientation'); // Check for valid orientation
+  // Store coordinates of a missed received attack
+  addMissedAttack(coord) {
+    this.missedAttacks.push(coord);
   }
 
-  // Checks if ship can be placed within the board boundries
-  checkBoardBoundries(axisX, axisY, shipSize, orientation) {
-    if (orientation === 'horizontal' && axisX + shipSize > this.boardSize) throw new Error('Ship exceeds board limits'); // Exceeds horizontal board boundry
-    if (orientation === 'vertical' && axisY + shipSize > this.boardSize) throw new Error('Ship exceeds board limits'); // Exceeds vertical board boundry
-  }
+  // Add a ship to the grid at the given coordinates
+  addShipToGrid(axisX, axisY, shipSize, orientation) {
 
-  // Checks if the ship overlaps another placed ship
-  checkPlacementOverlap(axisX, axisY, shipSize, orientation) {
-    for (let i = 0; i < shipSize; i++) {
-      if (orientation === 'horizontal' && this.grid[axisX + i][axisY] !== 'empty') throw new Error('Ships overlapping'); // Placing the ship horizontally crosses at least one 'not empty' cell
-      if (orientation === 'vertical' && this.grid[axisX][axisY + i] !== 'empty') throw new Error('Ships overlapping'); // Placing the ship vertically crosses at least one 'not empty' cell
+    // Creat new ship
+    const newShip = new Ship(shipSize, orientation);
+
+    if (newShip.orientation === 'horizontal') {
+      for (let i = 0; i < newShip.size; i++) {
+        this.grid[axisX + i][axisY] = newShip; // Spread ship horizontally over grid cells
+      }
+    } else if (newShip.orientation === 'vertical') {
+      for (let i = 0; i < newShip.size; i++) {
+        this.grid[axisX][axisY + i] = newShip; // Spread ship vertically over grid cells
+      }
     }
   }
 
-  // Adds a new ship instance to the grid at the specified coordinates with the given size
+
+  // Check input, create a new ship instance and call method that directly adds it to the grid
   placeShip(axisX, axisY, shipSize, orientation) {
     try {
 
+      // validateCoordinates,
+      // inputValidations.validateCoordinates(this, axisX, axisY);
+
+      // validateOrientation,
+      // inputValidations.validateOrientation(orientation);
+
+      // validateShipSize,
+      // inputValidations.validateShipSize(shipSize);
+
+
       // Validate input values
-      this.validateInput(axisX, axisY, shipSize, orientation);
+      inputValidations.validatePlacementInput(this, axisX, axisY, shipSize, orientation);
 
       // Prevent that ship is placed outside the board
-      this.checkBoardBoundries(axisX, axisY, shipSize, orientation);
+      inputValidations.checkPlacementBoardBoundries(this, axisX, axisY, shipSize, orientation);
 
       // Prevent ship to overlap excisting ship
-      this.checkPlacementOverlap(axisX, axisY, shipSize, orientation);
+      inputValidations.checkPlacementShipOverlap(this, axisX, axisY, shipSize, orientation);
 
-      const newShip = new Ship(shipSize);
+      // Input is valid, place ship on the grid at the given coordinates
+      this.addShipToGrid(axisX, axisY, shipSize, orientation);
 
-      // Place ship on given coordinates
-      if (orientation === 'horizontal') {
-        for (let i = 0; i < shipSize; i++) {
-          this.grid[axisX + i][axisY] = newShip;
-        }
-      } else if (orientation === 'vertical') {
-        for (let i = 0; i < shipSize; i++) {
-          this.grid[axisX][axisY + i] = newShip;
-        }
-      }
     } catch (error) {
-      // Stop execution and throw a custom error message
+      // Stop execution and throw error message
       throw error;
     }
   }
 
-  // receiveAttack() {
 
-  // }
+  // Determine whether a attack was succesful or not.
+  // In case of a hit tell the ship it is hit, else store the coordinates of the missed attack
+  receiveAttack(axisX, axisY) {
+    try {
 
-  // Gameboards should have a receiveAttack function that takes a pair of coordinates,
-  // determines whether or not the
-  // attack hit a ship and then sends the ‘hit’ function to the correct ship,
-  // or records the coordinates of the missed shot.
+      // Validate coordinates of the attack
+      inputValidations.validateAttackCoords(this, axisX, axisY);
+
+    } catch (error) {
+      throw error;
+    }
+
+    // Grid cell that reveived an attack, can only be 'empty' or a ship object
+    const attackedCell = this.grid[axisX][axisY];
+
+    if (attackedCell !== 'empty') { // The attack hit a ship
+      attackedCell.hit(); // Send 'hit' message to corresponding ship
+      return true;
+    }
+
+    // Attack didn't hit a ship
+    this.addMissedAttack([axisX, axisY]); // Store coordinates of missed attack
+    return false;
+  }
 }
 
 module.exports = Gameboard;
