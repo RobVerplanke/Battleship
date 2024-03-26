@@ -15,12 +15,12 @@ function checkShipOverlap(gameBoard, axisX, axisY, shipSize, orientation) {
 
   for (let i = 0; i < shipSize; i++) { // Check the state of the cells in wich the ship is going to be placed
 
-    if (orientation === 'horizontal' && gameBoard.getCellValue(axisX + i, axisY) !== 'empty') {
+    if (orientation === 'horizontal' && gameBoard._getCellValue(axisX + i, axisY) !== 'empty') {
       // Placing the ship horizontally crosses at least one 'not empty' cell
       throw new Error('Ships overlapping');
     }
 
-    if (orientation === 'vertical' && gameBoard.getCellValue(axisX, axisY + i) !== 'empty') {
+    if (orientation === 'vertical' && gameBoard._getCellValue(axisX, axisY + i) !== 'empty') {
       // Placing the ship vertically crosses at least one 'not empty' cell
       throw new Error('Ships overlapping');
     }

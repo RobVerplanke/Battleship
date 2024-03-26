@@ -7,58 +7,62 @@ const placementValidations = require('./utils/validatePlacement.js');
 
 class Gameboard {
   constructor() {
-    this.boardSize = 10; // Width/height
+    this.boardSize = 10; // Width and height
     this.grid = []; // The game board represented as a 2D array
     this.missedAttacks = []; // Tracks missed attacks
     this.allShipsSunk = false; // Indicates whether all ships are sunk
 
-    this.buildGameBoard(); // Initialize the game board
+    this._buildGameBoard(); // Initialize the game board
   }
 
-  // Return the size of the board
-  getBoardSize() {
+  // Return size of the board
+  _getBoardSize() {
     return this.boardSize;
   }
 
   // Return the grid array
-  getGrid() {
+  _getGrid() {
     return this.grid;
   }
 
-  // Set the value of a single cell
-  setCellValue(axisX, axisY, value) {
-    this.grid[axisX][axisY] = value;
+  // Return the 'missed attacks' array
+  _getMissedAttacksArray() {
+    return this.missedAttacks;
   }
 
-  getCellValue(axisX, axisY) {
-    return this.grid[axisX][axisY];
+  // Store coordinates of a missed received attack
+  _addMissedAttack(axisX, axisY) {
+    this._getMissedAttacksArray().push([axisX, axisY]);
+  }
+
+  // Set the value of a single cell
+  _setCellValue(axisX, axisY, value) {
+    this._getGrid()[axisX][axisY] = value;
+  }
+
+  // Returns the value of the corresponding grid cell
+  _getCellValue(axisX, axisY) {
+    return this._getGrid()[axisX][axisY];
   }
 
   // Build the game board grid as a 2D-array
-  buildGameBoard() {
-    for (let i = 0; i < this.boardSize; i++) {
-      this.grid[i] = [];
-      for (let j = 0; j < this.boardSize; j++) {
-        this.setCellValue(i, j, 'empty'); // Initialize each cell as empty
+  _buildGameBoard() {
+    for (let i = 0; i < this._getBoardSize(); i++) {
+      this._getGrid()[i] = [];
+      for (let j = 0; j < this._getBoardSize(); j++) {
+        this._setCellValue(i, j, 'empty'); // Initialize each cell as 'empty'
       }
     }
   }
 
-  // Store coordinates of a missed received attack
-  addMissedAttack(coord) {
-    this.missedAttacks.push(coord);
-  }
-
   // Add a ship to the grid at the given coordinates
-  addShipToGrid(axisX, axisY, shipSize, orientation) {
+  _addShipToGrid(axisX, axisY, shipSize, orientation) {
 
-    if (orientation === 'horizontal') {
-      // Spread ship horizontally over grid cells
-      for (let i = 0; i < shipSize; i++) this.setCellValue(axisX + i, axisY, new Ship(shipSize, orientation));
+    if (orientation === 'horizontal') { // Spread ship horizontally over grid cells
+      for (let i = 0; i < shipSize; i++) this._setCellValue(axisX + i, axisY, new Ship(shipSize, orientation));
 
-    } else if (orientation === 'vertical') {
-      // Spread ship vertically over grid cells
-      for (let i = 0; i < shipSize; i++) this.setCellValue(axisX, axisY + i, new Ship(shipSize, orientation));
+    } else if (orientation === 'vertical') { // Spread ship vertically over grid cells
+      for (let i = 0; i < shipSize; i++) this._setCellValue(axisX, axisY + i, new Ship(shipSize, orientation));
     }
   }
 
@@ -67,16 +71,16 @@ class Gameboard {
 
     try { // Validate arguments
 
-      inputValidations.validateCoordinates(this.getBoardSize(), axisX, axisY); // Check if values are valid coordinates on the board
+      inputValidations.validateCoordinates(this._getBoardSize(), axisX, axisY); // Check if values are valid coordinates on the board
 
       inputValidations.validateShipSize(shipSize); // Check if size of ship is valid
 
       inputValidations.validateOrientation(orientation); // Check if orientation is valid
 
-      // Placement: Prevent that ship is placed outside the board
-      placementValidations.checkBoardBoundaries(this.getBoardSize(), axisX, axisY, shipSize, orientation);
+      // Validate placement: Prevent that ships are placed outside the board boundaries
+      placementValidations.checkBoardBoundaries(this._getBoardSize(), axisX, axisY, shipSize, orientation);
 
-      // Placement: Prevent ship to overlap excisting ship
+      // Validate placement: Prevent that ships overlap each other
       placementValidations.checkShipOverlap(this, axisX, axisY, shipSize, orientation);
 
     } catch (error) {
@@ -85,7 +89,7 @@ class Gameboard {
     }
 
     // All values and the placement conditions are valid, add ship to the grid
-    this.addShipToGrid(axisX, axisY, shipSize, orientation);
+    this._addShipToGrid(axisX, axisY, shipSize, orientation);
   }
 
   // Determine whether a attack was succesful or not.
@@ -93,13 +97,13 @@ class Gameboard {
   receiveAttack(axisX, axisY) {
 
     try { // Check if values are valid coordinates on the board
-      inputValidations.validateCoordinates(this.getBoardSize(), axisX, axisY);
+      inputValidations.validateCoordinates(this._getBoardSize(), axisX, axisY);
     } catch (error) {
       throw error;
     }
 
     // Grid cell that reveived an attack, can only be 'empty' or a ship object
-    const attackedCell = this.getCellValue(axisX, axisY);
+    const attackedCell = this._getCellValue(axisX, axisY);
 
     if (attackedCell !== 'empty') { // The attack hit a ship
       attackedCell.hit(); // Send 'hit' message to corresponding ship
@@ -107,7 +111,7 @@ class Gameboard {
     }
 
     // Attack didn't hit a ship
-    this.addMissedAttack([axisX, axisY]); // Store coordinates of missed attack
+    this._addMissedAttack(axisX, axisY); // Store coordinates of missed attack
     return false;
   }
 }
