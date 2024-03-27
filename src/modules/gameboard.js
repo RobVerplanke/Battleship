@@ -10,13 +10,13 @@ class Gameboard {
   constructor() {
     this.boardSize = 10; // Width and height
     this.grid = []; // The game board represented as a 2D array
-    this.missedAttacks = []; // Tracks missed attacks
-    this.allShipsSunk = false; // Indicates whether or not all ships are sunk
+    this.missedAttacks = new Set(); // Tracks missed attacks
+    this.allShipsSunk = false; // Indicates whether or not all ships have sunk
 
     this._buildGameBoard(); // Initialize the game board
   }
 
-  // Build the game board grid as a 2D-array
+  // Build the game board as a 2D-array grid
   _buildGameBoard() {
     for (let i = 0; i < this._getBoardSize(); i++) {
       this._getGrid()[i] = [];
@@ -36,17 +36,39 @@ class Gameboard {
     return this.grid;
   }
 
+  // Returns the value of the corresponding grid cell
+  _getCellValue(axisX, axisY) {
+    return this._getGrid()[axisX][axisY];
+  }
+
+  // Set the value of a single cell
+  _setCellValue(axisX, axisY, value) {
+    this._getGrid()[axisX][axisY] = value;
+  }
+
+  // Selects only sunken ships
+  static _validateCellValue(allSunkenShipsList, cellValue) {
+    const newList = allSunkenShipsList;
+
+    if (cellValue instanceof Ship) { // Cell contains (part of) a ship
+      const ship = cellValue;
+      if (ship.isSunk()) newList.add(ship); // Add sunken ship to list
+    }
+
+    return newList;
+  }
+
   // Return the 'missed attacks' array
   _getMissedAttacks() {
     return this.missedAttacks;
   }
 
-  // Store coordinates of a missed received attack
-  _setMissedAttack(axisX, axisY) {
-    this._getMissedAttacks().push([axisX, axisY]);
+  // Store coordinate of a missed received attack
+  _setMissedAttacks(axisX, axisY) {
+    this._getMissedAttacks().add([axisX, axisY]);
   }
 
-  // Return whether or not al shinks are sunk // FOR TESTING
+  // Return whether or not al ships are sunk // FOR TESTING
   _getAllShipsSunkState() {
     return this.allShipsSunk;
   }
@@ -56,51 +78,47 @@ class Gameboard {
     this.allShipsSunk = newState;
   }
 
-  // Iterate through the grid cells and calculate whether or not all the total amount of ships are sunk
-  _validateAllShipsSunkState() {
-    const allSunkShipsList = new Set();
 
-    // iterate through cells and store every ship that is sunk
+  // Iterate through grid cells and store every ship that is sunk
+  _getAllSunkenShips() {
+    const allSunkenShipsList = new Set(); // List of all sunken ships
+
     for (let i = 0; i < this._getBoardSize(); i++) {
       for (let j = 0; j < this._getBoardSize(); j++) {
-        const cellValue = this._getGrid()[i][j];
-        if (cellValue instanceof Ship) {
-          const ship = cellValue;
-          if (ship.isSunk()) allSunkShipsList.add(ship);
-        }
+        Gameboard._validateCellValue(allSunkenShipsList, this._getGrid()[i][j]);
       }
     }
 
-    // All the ships sunk
-    if (allSunkShipsList.size === SHIP_AMOUNT) this._setAllShipsSunkState(true);
+    return allSunkenShipsList;
   }
+
+
+  // Validate whether or not all ships on the board are sunk
+  _validateAllShipsSunkState() {
+    const allSunkenShipsList = this._getAllSunkenShips(); // List of all sunken ships
+
+    // Check if the amount of sunken ships is the same as the total amount of ships
+    if (allSunkenShipsList.size === SHIP_AMOUNT && !this._getAllShipsSunkState()) {
+      this._setAllShipsSunkState(true); // Send message to the gameboard that all ships are sunk
+      return true;
+    }
+
+    return false;
+  }
+
 
   // Used for creating ship 'parts' when one ship has to be placed over multiple cells
   static _shipFactory(shipSize, orientation) {
     return new Ship(shipSize, orientation);
   }
 
-  // Send hit message, check if the ship is sunk as a result of this hit
-  // Then validate whether or not it was the last ship on the board
+  // Send hit message to attacked ship, check if it sunk as a result of this hit,
+  // then validate whether or not it was the last surviving ship on the board
   static _sendHit(gameBoard, targetedShip) {
     targetedShip.hit(); // Send a 'hit' message to the ship that was attacked
 
-    // If the ship has sunk, check if there are other ships left
-    if (targetedShip.isSunk()) {
-      if (gameBoard._validateAllShipsSunkState()) {
-        gameBoard._setAllShipsSunkState(true);
-      }
-    }
-  }
-
-  // Returns the value of the corresponding grid cell
-  _getCellValue(axisX, axisY) {
-    return this._getGrid()[axisX][axisY];
-  }
-
-  // Set the value of a single cell
-  _setCellValue(axisX, axisY, value) {
-    this._getGrid()[axisX][axisY] = value;
+    // If the ship has sunk, check if all ships are sunk now
+    if (targetedShip.isSunk()) gameBoard._validateAllShipsSunkState();
   }
 
 
@@ -116,7 +134,7 @@ class Gameboard {
   }
 
 
-  // Check input, create a new ship instance and call method that directly adds it to the grid
+  // Check input, create a new ship instance and add it to the grid
   placeShip(axisX, axisY, shipSize, orientation) {
 
     // Check if values are valid coordinates on the board
@@ -139,14 +157,14 @@ class Gameboard {
   }
 
 
-  // Determine whether a attack was succesful or not.
-  // In case of a hit tell the ship it is hit, else store the coordinates of the missed attack
+  // Determine whether or not an attack was succesful
+  // In case of a hit tell the ship it was hit, else store the coordinates of the missed attack
   receiveAttack(axisX, axisY) {
 
     // Check if values are valid coordinates on the board
     validateInput.validateCoordinates(this._getBoardSize(), axisX, axisY);
 
-    // Get the cell that reveived an attack, it can only be 'empty' or a ship object
+    // Check the cell that reveived an attack, it can only be 'empty' or a ship
     const attackedCell = this._getCellValue(axisX, axisY);
 
     if (attackedCell instanceof Ship) { // The attack hit a ship
@@ -156,7 +174,8 @@ class Gameboard {
     }
 
     // Attack didn't hit a ship
-    this._setMissedAttack(axisX, axisY); // Store coordinates of the missed attack
+    this._setMissedAttacks(axisX, axisY); // Store coordinates of the missed attack
+
     return false;
   }
 }

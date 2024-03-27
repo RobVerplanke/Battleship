@@ -311,14 +311,14 @@ describe('Gameboard', () => {
       const gameBoard = new Gameboard();
 
       gameBoard.receiveAttack(1, 1); // Missed attack
-      expect(gameBoard.missedAttacks).toEqual([[1, 1]]);
+      expect(Array.from(gameBoard.missedAttacks)).toEqual([[1, 1]]);
 
       gameBoard.receiveAttack(3, 8); // Missed attack
-      expect(gameBoard.missedAttacks).toEqual([[1, 1], [3, 8]]);
+      expect(Array.from(gameBoard.missedAttacks)).toEqual([[1, 1], [3, 8]]);
 
       gameBoard.placeShip(5, 9, 3, 'horizontal'); // Place target
       gameBoard.receiveAttack(6, 9); // Attack was a hit
-      expect(gameBoard.missedAttacks).toEqual([[1, 1], [3, 8]]); // Coordinate was not stored
+      expect(Array.from(gameBoard.missedAttacks)).toEqual([[1, 1], [3, 8]]); // Coordinate was not stored
 
     })
 
@@ -361,9 +361,16 @@ describe('Gameboard', () => {
       gameBoard.receiveAttack(0, 7);
       expect(gameBoard._getAllShipsSunkState()).toBeFalsy(); // Not all ship are sunk
 
+      // The gameboard itself should report that not all ships are sunk now
+      expect(gameBoard.allShipsSunk).toBeFalsy();
+
       // Last ship recieves a fifth hit
       gameBoard.receiveAttack(0, 7); // Fifth ship has sunk
       expect(gameBoard._getAllShipsSunkState()).toBeTruthy(); // All ships are sunk
+
+      // The gameboard itself should report that all ships are sunk now
+      expect(gameBoard.allShipsSunk).toBeTruthy();
+      
     })
   });
 });
