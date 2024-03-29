@@ -1,0 +1,89 @@
+/* Reset styles */
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+/* Custom properties */
+
+:root{
+    --options-holder-heigth: 140px;
+
+} 
+
+
+/* Overall layout */
+
+html, body {
+    min-height: 100vh;
+}
+
+header{
+    outline: solid 1px rgb(186, 167, 99);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: var(--options-holder-heigth);
+}
+
+main{
+    outline: solid 1px rgb(33, 23, 230);
+
+    height: calc(100vh - var(--options-holder-heigth));
+
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-evenly;
+}
+
+
+/* Components */
+
+#player-one-gameboard-holder, #player-two-gameboard-holder{
+    height: 500px;
+    width: 500px;
+}
+
+.player-name{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 10px 0 10px 0;
+}
+
+.gameboard-holder{
+    height: 500px;
+}
+
+.gameboard{
+    background-color: wheat;
+    outline: solid 5px black;
+}
+
+#player-one-gameboard, #player-two-gameboard{
+    display: grid; 
+    grid-template-columns: repeat(10, auto);
+}
+
+.gridcell{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 12px;
+    outline: solid 1px red;
+    width: 50px;
+    height: 50px;
+}
+
+.gridcell-ship{
+    z-index: 10;
+    background-color: blue;
+}
