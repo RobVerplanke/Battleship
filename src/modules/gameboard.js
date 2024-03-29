@@ -1,14 +1,14 @@
-/* eslint-disable no-useless-catch */
-
+/* eslint-disable class-methods-use-this */
 const Ship = require('./battleship.js');
-const validateInput = require('./utils/validateInput.js');
 const validatePlacement = require('./utils/validatePlacement.js');
+const commonFunctions = require('./utils/commonFunctions.js');
 
 const SHIP_AMOUNT = 5; // Default amount of ships for each player
+const BOARD_SIZE = 10; // Default dimensions for the game board
 
 class Gameboard {
   constructor() {
-    this.boardSize = 10; // Width and height
+    this.boardSize = BOARD_SIZE; // Width and height
     this.grid = []; // The game board represented as a 2D array
     this.missedAttacks = new Set(); // Tracks missed attacks
     this.allShipsSunk = false; // Indicates whether or not all ships have sunk
@@ -31,9 +31,18 @@ class Gameboard {
     return this.boardSize;
   }
 
+  _setBoardSize(newSize) {
+    this.boardSize = newSize;
+  }
+
   // Return the grid array
   _getGrid() {
     return this.grid;
+  }
+
+  // Clear the gameboard from grid cells
+  _clearGrid() {
+    this.grid = [];
   }
 
   // Returns the value of the corresponding grid cell
@@ -44,18 +53,6 @@ class Gameboard {
   // Set the value of a single cell
   _setCellValue(axisX, axisY, value) {
     this._getGrid()[axisX][axisY] = value;
-  }
-
-  // Selects only sunken ships
-  static _validateCellValue(allSunkenShipsList, cellValue) {
-    const newList = allSunkenShipsList;
-
-    if (cellValue instanceof Ship) { // Cell contains (part of) a ship
-      const ship = cellValue;
-      if (ship.isSunk()) newList.add(ship); // Add sunken ship to list
-    }
-
-    return newList;
   }
 
   // Return the 'missed attacks' array
@@ -78,20 +75,17 @@ class Gameboard {
     this.allShipsSunk = newState;
   }
 
-
   // Iterate through grid cells and store every ship that is sunk
   _getAllSunkenShips() {
     const allSunkenShipsList = new Set(); // List of all sunken ships
 
     for (let i = 0; i < this._getBoardSize(); i++) {
       for (let j = 0; j < this._getBoardSize(); j++) {
-        Gameboard._validateCellValue(allSunkenShipsList, this._getGrid()[i][j]);
+        commonFunctions.validateCellValue(allSunkenShipsList, this._getGrid()[i][j]);
       }
     }
-
     return allSunkenShipsList;
   }
-
 
   // Validate whether or not all ships on the board are sunk
   _validateAllShipsSunkState() {
@@ -102,19 +96,12 @@ class Gameboard {
       this._setAllShipsSunkState(true); // Send message to the gameboard that all ships are sunk
       return true;
     }
-
     return false;
-  }
-
-
-  // Used for creating ship 'parts' when one ship has to be placed over multiple cells
-  static _shipFactory(shipSize, orientation) {
-    return new Ship(shipSize, orientation);
   }
 
   // Send hit message to attacked ship, check if it sunk as a result of this hit,
   // then validate whether or not it was the last surviving ship on the board
-  static _sendHit(gameBoard, targetedShip) {
+  _sendHit(gameBoard, targetedShip) {
     targetedShip.hit(); // Send a 'hit' message to the ship that was attacked
 
     // If the ship has sunk, check if all ships are sunk now
@@ -124,7 +111,7 @@ class Gameboard {
 
   // Add a ship to the grid at the given coordinates
   _addShipToGrid(axisX, axisY, shipSize, orientation) {
-    const newShip = Gameboard._shipFactory(shipSize, orientation);
+    const newShip = commonFunctions.shipFactory(shipSize, orientation);
 
     if (orientation === 'horizontal') { // Spread ship horizontally over grid cells
       for (let i = 0; i < shipSize; i++) this._setCellValue(axisX + i, axisY, newShip);
@@ -136,6 +123,9 @@ class Gameboard {
 
   // Check input, create a new ship instance and add it to the grid
   placeShip(axisX, axisY, shipSize, orientation) {
+
+    // eslint-disable-next-line global-require
+    const validateInput = require('./utils/validateInput.js'); // Necessary for external calls
 
     // Check if values are valid coordinates on the board
     validateInput.validateCoordinates(this._getBoardSize(), axisX, axisY);
@@ -157,19 +147,29 @@ class Gameboard {
   }
 
 
-  // Determine whether or not an attack was succesful
+  // Gameboard reveived an attack, determine whether or not an attack was succesful, switch players
   // In case of a hit tell the ship it was hit, else store the coordinates of the missed attack
-  receiveAttack(axisX, axisY) {
+  receiveAttack(axisX, axisY, activePlayer, opponent) {
+
+    // eslint-disable-next-line global-require
+    const validateInput = require('./utils/validateInput.js'); // Necessary to import here for external calls
 
     // Check if values are valid coordinates on the board
     validateInput.validateCoordinates(this._getBoardSize(), axisX, axisY);
 
+    // Check if player values are defined
+    validateInput.validatePlayers(activePlayer, opponent);
+
     // Check the cell that reveived an attack, it can only be 'empty' or a ship
     const attackedCell = this._getCellValue(axisX, axisY);
 
+    // Switch turns between players
+    this.switchPlayers(activePlayer, opponent);
+
     if (attackedCell instanceof Ship) { // The attack hit a ship
       const gameBoard = this;
-      Gameboard._sendHit(gameBoard, attackedCell); // Send 'hit' message to the corresponding ship
+      this._sendHit(gameBoard, attackedCell); // Send 'hit' message to the corresponding ship
+
       return true;
     }
 
@@ -177,6 +177,12 @@ class Gameboard {
     this._setMissedAttacks(axisX, axisY); // Store coordinates of the missed attack
 
     return false;
+  }
+
+  // Switch turns between players, called after each received attack
+  switchPlayers(playerOne, playerTwo) {
+    playerOne.toggleActiveState();
+    playerTwo.toggleActiveState();
   }
 }
 
