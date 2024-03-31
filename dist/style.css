@@ -18,12 +18,11 @@
 /* Overall layout */
 
 html, body {
+    background-color: rgb(96, 140, 175);
     min-height: 100vh;
 }
 
 header{
-    outline: solid 1px rgb(186, 167, 99);
-
     display: flex;
     justify-content: center;
     align-items: center;
@@ -32,8 +31,6 @@ header{
 }
 
 main{
-    outline: solid 1px rgb(33, 23, 230);
-
     height: calc(100vh - var(--options-holder-heigth));
 
     display: flex;
@@ -46,8 +43,8 @@ main{
 /* Components */
 
 #player-one-gameboard-holder, #player-two-gameboard-holder{
-    height: 500px;
-    width: 500px;
+    height: 400px;
+    width: 400px;
 }
 
 .player-name{
@@ -59,12 +56,16 @@ main{
 }
 
 .gameboard-holder{
-    height: 500px;
+    height: 400px;
 }
 
 .gameboard{
-    background-color: wheat;
+    background-color: gray;
     outline: solid 5px black;
+}
+
+.gameboard-active{
+    outline: solid 5px rgb(151, 0, 0);
 }
 
 #player-one-gameboard, #player-two-gameboard{
@@ -78,12 +79,22 @@ main{
     align-items: center;
 
     font-size: 12px;
-    outline: solid 1px red;
-    width: 50px;
-    height: 50px;
+    outline: solid 1px lightgray;
+    width: 40px;
+    height: 40px;
 }
 
 .gridcell-ship{
     z-index: 10;
-    background-color: blue;
+    background-color: rgb(40, 40, 40);
+}
+
+.gridcell-missed{
+    z-index: 10;
+    background-color: rgb(193, 193, 193);
+}
+
+.gridcell-ship-hit{
+    z-index: 10;
+    background-color: rgb(215, 0, 0);
 }

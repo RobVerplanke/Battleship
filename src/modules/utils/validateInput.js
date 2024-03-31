@@ -44,10 +44,16 @@ function validatePlayers(playerOne, playerTwo) {
   }
 }
 
+function validateActivePlayer(activePlayer) {
+  console.log('Not your turn!');
+  if (!activePlayer.active) throw new Error('Not your turn!');
+}
+
 module.exports = {
   validateCoordinates,
   validateOrientation,
   validateShipSize,
   validateGameBoard,
   validatePlayers,
+  validateActivePlayer,
 };

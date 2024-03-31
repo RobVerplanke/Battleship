@@ -31,6 +31,8 @@ describe('Player', () => {
     it('should throw error if no arguments are given', () => {
         const newPlayer = new Player();
         
+        newPlayer.toggleActiveState(); // Set player as active
+        
         expect(() => { 
             newPlayer.sendAttack(); // No arguments given
         }).toThrow('Input is incomplete');
@@ -40,6 +42,9 @@ describe('Player', () => {
         const newPlayer = new Player();
         const gameBoard = new Gameboard();
         
+        newPlayer.toggleActiveState(); // Set player as active
+
+
         expect(() => {
             newPlayer.sendAttack('argument'); // Only one string given
         }).toThrow('Input is invalid');
@@ -56,6 +61,8 @@ describe('Player', () => {
     it('should throw error if two argumenta are given', () => {
         const newPlayer = new Player();
         
+        newPlayer.toggleActiveState(); // Set player as active
+        
         expect(() => {
             newPlayer.sendAttack('argument', 1); // Two arguments given
         }).toThrow('Input is invalid');
@@ -67,6 +74,8 @@ describe('Player', () => {
 
     it('should throw error if only coordinates are given', () => {
         const newPlayer = new Player();
+
+        newPlayer.toggleActiveState(); // Set player as active
         
         expect(() => {
             newPlayer.sendAttack(1, 2); // Only coordinates given
@@ -76,6 +85,8 @@ describe('Player', () => {
     it('should throw error if gameboard is not a instance of the Gameboard class', () => {
         const newPlayer = new Player();
         const testBoard = {};
+
+        newPlayer.toggleActiveState();// Set player as active
         
         expect(() => {
             newPlayer.sendAttack(testBoard, 1, 2); // Invalid gameboard given
@@ -84,32 +95,38 @@ describe('Player', () => {
 
     it('can send a attack message to a gameboard', () => {
         const mockedGameBoard = new Gameboard();
-        const mockReceiveAttack = jest.spyOn(mockedGameBoard, 'receiveAttack'); // Spy on receiveAttack method
+        const mockReceiveAttack = jest.spyOn(mockedGameBoard, 'receiveAttack').mockImplementation(() => {}); // Spy on receiveAttack method
         const newPlayer = new Player();
         const opponent = new Player(); // Dummy
+        const opponentGameboardDOM = ''; // Dummy
 
-        newPlayer.sendAttack(mockedGameBoard, opponent, 1, 2);
+        newPlayer.toggleActiveState(); // Set player as active
+
+        newPlayer.sendAttack(mockedGameBoard, opponent, opponentGameboardDOM, 1, 2);
 
         expect(mockReceiveAttack).toBeCalled();
     })
 
     it('places a missed attack on a gameboard with no ships', () => {
         
-        // Mock the Gameboard
         jest.mock('../modules/gameboard.js', () => {
             return jest.fn().mockImplementation(() => {
-              return {
-                missedAttacks: new Set()
-              };
+                return {
+                    receiveAttack: jest.fn(),
+                    missedAttacks: new Set()
+                };
             });
         });
         
         const gameBoard = new Gameboard();
         const newPlayer = new Player();
         const opponent = new Player(); // Dummy
+        const opponentGameboardDOM = ''; // Dummy
+
+        newPlayer.toggleActiveState(); // Set player as active
 
         // Send an attack
-        newPlayer.sendAttack(gameBoard, opponent, 1, 1); // Doesn't hit a ship
+        newPlayer.sendAttack(gameBoard, opponent, opponentGameboardDOM, 1, 1); // Doesn't hit a ship
     
         // Check if the hits-property of the mocked ship is raised with one
         expect(Array.from(gameBoard.missedAttacks)).toEqual([[1, 1]]);
@@ -117,15 +134,19 @@ describe('Player', () => {
 
     it('should call the sendHit method in case of a hit send by a player', () => {
         const gameBoard = new Gameboard();
-        const mockHit = jest.spyOn(gameBoard, '_sendHit');
+        const mockHit = jest.spyOn(gameBoard, '_sendHit').mockImplementation(() => {});
         const newPlayer = new Player();
         const opponent = new Player(); // Dummy
-        
+        const opponentGameboardDOM = ''; // Dummy
+
         // Place ship
         gameBoard.placeShip(1, 2, 3, 'horizontal');
+        
+        // Set player as active
+        newPlayer.toggleActiveState(); 
 
         // Send an player attack
-        newPlayer.sendAttack(gameBoard, opponent, 1, 2); // Hit the ship
+        newPlayer.sendAttack(gameBoard, opponent, opponentGameboardDOM, 1, 2); // Hit the ship
     
         // The method _sendhit is called after a hit
         expect(mockHit).toHaveBeenCalled();
@@ -136,21 +157,21 @@ describe('Player', () => {
         const playerTwo = new Player('Player two');
         const gameBoardOne = new Gameboard();
         const gameBoardTwo = new Gameboard();
+        const opponentGameboardDOM = ''; // Dummy
 
-        // Set player one as active player
-        playerOne.toggleActiveState();
+        playerOne.toggleActiveState(); // Set player as active
         
         expect(playerOne.active).toBeTruthy(); // Active state is true
         expect(playerTwo.active).toBeFalsy(); // Active state is false
 
         //Player one attacks gameboard of player two
-        playerOne.sendAttack(gameBoardTwo, playerTwo, 1, 1);
+        playerOne.sendAttack(gameBoardTwo, playerTwo, opponentGameboardDOM, 1, 1);
 
         expect(playerOne.active).toBeFalsy(); // Active state is false
         expect(playerTwo.active).toBeTruthy(); // Active state is true
 
         // Player two atacks gameboard of player one
-        playerTwo.sendAttack(gameBoardOne, playerOne, 1, 1);
+        playerTwo.sendAttack(gameBoardOne, playerOne, opponentGameboardDOM, 1, 1);
 
         expect(playerOne.active).toBeTruthy(); // Active state is true
         expect(playerTwo.active).toBeFalsy(); // Active state is false
@@ -160,16 +181,21 @@ describe('Player', () => {
         const playerOne = new Player('Player one');
         const playerTwo = new Player('Player two');
         const gameBoard = new Gameboard();
-
+        const opponentGameboardDOM = ''; // Dummy
+        
+        playerOne.toggleActiveState();  // Set player as active
+        
         // Attack a cell grid
-        playerOne.sendAttack(gameBoard, playerTwo, 1, 2);
-       
+        playerOne.sendAttack(gameBoard, playerTwo, opponentGameboardDOM, 1, 2);
+
+        playerOne.toggleActiveState(); // Set player as active
+
         expect(() => {
-           playerOne.sendAttack(gameBoard, playerTwo, 1, 2); // Attack the same cell twice
+            playerOne.sendAttack(gameBoard, playerTwo, opponentGameboardDOM, 1, 2); // Attack the same cell twice
         }).toThrow('Cell already attacked!');
 
         expect(() => {
-            playerOne.sendAttack(gameBoard, playerTwo, 1, 2); // Attack the same cell three times
+            playerOne.sendAttack(gameBoard, playerTwo, opponentGameboardDOM, 1, 2); // Attack the same cell three times
          }).toThrow('Cell already attacked!');
     })
 
@@ -204,17 +230,22 @@ describe('Player', () => {
         const playerOne = new Player();
         const playerTwo = new Player(); // Dummy
         const gameBoard = new Gameboard();
+        const opponentGameboardDOM = ''; // Dummy
 
         // Generate a valid random coordinate
         const randomCoordinate = playerOne.generateRandomCoordinate(gameBoard);
         const axisX = randomCoordinate[0];
         const axisY = randomCoordinate[1];
+
+        playerOne.toggleActiveState();  // Set player as active
     
         // Place an atack on the generated coordinate
-        playerOne.sendAttack(gameBoard, playerTwo, axisX, axisY);
+        playerOne.sendAttack(gameBoard, playerTwo, opponentGameboardDOM, axisX, axisY);
+
+        playerOne.toggleActiveState();  // Set player as active
 
         expect(() => { // Atack the same cell again
-            playerOne.sendAttack(gameBoard, playerTwo, axisX, axisY);
+            playerOne.sendAttack(gameBoard, playerTwo, opponentGameboardDOM, axisX, axisY);
         }).toThrow('Cell already attacked!');
     })
 
@@ -222,14 +253,17 @@ describe('Player', () => {
         const playerOne = new Player();
         const playerTwo = new Player(); // Dummy
         const gameBoard = new Gameboard();
+        const opponentGameboardDOM = ''; // Dummy
 
         // Generate a valid random coordinate
         const randomCoordinate = playerOne.generateRandomCoordinate(gameBoard);
         const axisX = randomCoordinate[0];
         const axisY = randomCoordinate[1];
-    
+
+        playerOne.toggleActiveState();  // Set player as active
+
         // Place an atack on the generated coordinate
-        playerOne.sendAttack(gameBoard, playerTwo, axisX, axisY);
+        playerOne.sendAttack(gameBoard, playerTwo, opponentGameboardDOM, axisX, axisY);
 
         // Get the list with all missed attacks
         const missedAttacks = gameBoard._getMissedAttacks();
@@ -237,4 +271,22 @@ describe('Player', () => {
         // Missed random attack is stored in game board
         expect(missedAttacks.values(randomCoordinate)).toBeTruthy();
     })
+
+    it('should only allow attacks if it is player\'s turn', () => {
+        const playerOne = new Player();
+        const playerTwo = new Player(); // Dummy
+        const gameBoard = new Gameboard();
+        const opponentGameboardDOM = ''; // Dummy
+    
+        playerOne.toggleActiveState(); // Set player as active
+    
+        // Place attack
+        expect(playerOne.sendAttack(gameBoard, playerTwo, opponentGameboardDOM, 1, 2)).toBeTruthy();
+    
+        playerOne.toggleActiveState(); // Set player as active
+    
+        // Directly place another attack
+        expect(playerOne.sendAttack(gameBoard, playerTwo, opponentGameboardDOM, 1, 3)).toBeFalsy();
+    });
+    
 })

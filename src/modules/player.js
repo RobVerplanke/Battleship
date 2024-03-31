@@ -1,6 +1,7 @@
 /* eslint-disable class-methods-use-this */
 const validateInput = require('./utils/validateInput.js');
-const commonFunctions = require('./utils/commonFunctions.js');
+const validatePlayer = require('./utils/validatePlayer.js');
+const utils = require('./utils/utils.js');
 
 class Player {
   constructor(name = 'Player') {
@@ -26,6 +27,11 @@ class Player {
     this.name = 'Computer';
   }
 
+  // Check if it's players turn to play
+  _getActiveState() {
+    return this.active;
+  }
+
   // Switch turns between players
   toggleActiveState() {
     this.active = !this.active;
@@ -45,8 +51,8 @@ class Player {
     let axisY = null;
 
     // Keep generating a coordinate until it's valid
-    axisX = (commonFunctions.getRandomInt(gameBoard._getBoardSize()));
-    axisY = (commonFunctions.getRandomInt(gameBoard._getBoardSize()));
+    axisX = (utils.getRandomInt(gameBoard.getBoardSize()));
+    axisY = (utils.getRandomInt(gameBoard.getBoardSize()));
 
     // Prevent that a grid cell is attacked more than once
     this._validateSentAttacks(axisX, axisY);
@@ -58,19 +64,22 @@ class Player {
   }
 
   // Send a attack to a specific grid cell
-  sendAttack(gameBoard, opponent, axisX, axisY) {
+  sendAttack(gameBoard, opponent, opponentGameBoardDOM, axisX, axisY) {
+
+    // Check if it's current players turn to play
+    if (!validatePlayer.validateActivePlayer(this)) return false;
 
     // Check if gameboard value is actually a gameboard
     validateInput.validateGameBoard(gameBoard);
 
     // Check if values are valid coordinates on the board
-    validateInput.validateCoordinates(gameBoard._getBoardSize(), axisX, axisY);
+    validateInput.validateCoordinates(gameBoard.getBoardSize(), axisX, axisY);
 
     // Prevent that a grid cell is attacked more than once
     this._validateSentAttacks(axisX, axisY);
 
     // Send valided coordinates to a validated gameboard
-    gameBoard.receiveAttack(axisX, axisY, this, opponent);
+    gameBoard.receiveAttack(axisX, axisY, this, opponent, opponentGameBoardDOM);
 
     // Store attacked coordinates
     this._setSentAttacks(axisX, axisY);

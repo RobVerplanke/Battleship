@@ -261,9 +261,10 @@ describe('Gameboard', () => {
     it('should return true when an attack hits target', () => {
       const gameBoard = new Gameboard();
       const player = new Player(); // Dummy
+      const dummyGameboardDOM = ''; // Dummy
   
       gameBoard.placeShip(1, 2, 3, 'horizontal'); // Place target
-      const result = gameBoard.receiveAttack(1, 2, player, player); // Hit the target
+      const result = gameBoard.receiveAttack(1, 2, player, player, dummyGameboardDOM); // Hit the target
 
       expect(result).toBeTruthy();
     })
@@ -271,20 +272,22 @@ describe('Gameboard', () => {
     it('should return false when an attack missed target', () => {
       const gameBoard = new Gameboard();
       const player = new Player(); // Dummy
+      const dummyGameboardDOM = ''; // Dummy
   
       gameBoard.placeShip(1, 2, 3, 'horizontal'); // Place target
-      const result = gameBoard.receiveAttack(1, 3, player, player); // Miss the target
+      const result = gameBoard.receiveAttack(1, 3, player, player, dummyGameboardDOM); // Miss the target
 
       expect(result).toBeFalsy();
     })
 
     it('calls hit method on attacked ship', () => {
       const player = new Player(); // Dummy
+      const dummyGameboardDOM = ''; // Dummy
       const gameBoard = new Gameboard();
       const mockHit = jest.spyOn(gameBoard, '_sendHit'); // Spy on _sendHit method
 
       gameBoard.placeShip(1, 2, 3, 'horizontal'); // Place target
-      gameBoard.receiveAttack(2, 2, player, player); // Hit the target
+      gameBoard.receiveAttack(2, 2, player, player, dummyGameboardDOM); // Hit the target
       
       expect(mockHit).toBeCalled(); // _sendHit method is called
 
@@ -314,15 +317,16 @@ describe('Gameboard', () => {
     it('stores the coordinates of each missed shot', () => {
       const gameBoard = new Gameboard();
       const player = new Player(); // Dummy
+      const dummyGameboardDOM = ''; // Dummy
       
-      gameBoard.receiveAttack(1, 1, player, player); // Missed attack
+      gameBoard.receiveAttack(1, 1, player, player, dummyGameboardDOM); // Missed attack
       expect(Array.from(gameBoard.missedAttacks)).toEqual([[1, 1]]);
 
-      gameBoard.receiveAttack(3, 8 ,player, player); // Missed attack
+      gameBoard.receiveAttack(3, 8 ,player, player, dummyGameboardDOM); // Missed attack
       expect(Array.from(gameBoard.missedAttacks)).toEqual([[1, 1], [3, 8]]);
 
       gameBoard.placeShip(5, 9, 3, 'horizontal'); // Place target
-      gameBoard.receiveAttack(6, 9, player, player); // Attack was a hit
+      gameBoard.receiveAttack(6, 9, player, player, dummyGameboardDOM); // Attack was a hit
       expect(Array.from(gameBoard.missedAttacks)).toEqual([[1, 1], [3, 8]]); // Coordinate was not stored
 
     })
@@ -330,6 +334,7 @@ describe('Gameboard', () => {
     it('should report whether or not all ships are sunk, with all ships on the board', () => {
       const gameBoard = new Gameboard();
       const player = new Player(); // Dummy
+      const dummyGameboardDOM = ''; // Dummy
 
       // Place all 5 ships
       gameBoard.placeShip(1, 1, 2, 'vertical'); // Place ship with size 2
@@ -337,42 +342,42 @@ describe('Gameboard', () => {
       gameBoard.placeShip(9, 5, 3, 'vertical'); // Place ship with size 3
       gameBoard.placeShip(3, 6, 4, 'horizontal'); // Place ship with size 4
       gameBoard.placeShip(0, 4, 5, 'vertical'); // Place ship with size 5
-      expect(gameBoard._getAllShipsSunkState()).toBeFalsy(); // Not all ship are sunk
+      expect(gameBoard.getAllShipsSunkState()).toBeFalsy(); // Not all ship are sunk
 
       // All ships receive one hit
-      gameBoard.receiveAttack(1, 1, player, player); // No ship has sunk
-      gameBoard.receiveAttack(4, 2, player, player);
-      gameBoard.receiveAttack(9, 5, player, player);
-      gameBoard.receiveAttack(3, 6, player, player);
-      gameBoard.receiveAttack(0, 4, player, player);
-      expect(gameBoard._getAllShipsSunkState()).toBeFalsy(); // Not all ship are sunk
+      gameBoard.receiveAttack(1, 1, player, player, dummyGameboardDOM); // No ship has sunk
+      gameBoard.receiveAttack(4, 2, player, player, dummyGameboardDOM);
+      gameBoard.receiveAttack(9, 5, player, player, dummyGameboardDOM);
+      gameBoard.receiveAttack(3, 6, player, player, dummyGameboardDOM);
+      gameBoard.receiveAttack(0, 4, player, player, dummyGameboardDOM);
+      expect(gameBoard.getAllShipsSunkState()).toBeFalsy(); // Not all ship are sunk
 
       // All ships receive a second hit
-      gameBoard.receiveAttack(1, 2, player, player); // First ship has sunk
-      gameBoard.receiveAttack(5, 2, player, player);
-      gameBoard.receiveAttack(9, 6, player, player);
-      gameBoard.receiveAttack(4, 6, player, player);
-      gameBoard.receiveAttack(0, 5, player, player);
-      expect(gameBoard._getAllShipsSunkState()).toBeFalsy(); // Not all ship are sunk
+      gameBoard.receiveAttack(1, 2, player, player, dummyGameboardDOM); // First ship has sunk
+      gameBoard.receiveAttack(5, 2, player, player, dummyGameboardDOM);
+      gameBoard.receiveAttack(9, 6, player, player, dummyGameboardDOM);
+      gameBoard.receiveAttack(4, 6, player, player, dummyGameboardDOM);
+      gameBoard.receiveAttack(0, 5, player, player, dummyGameboardDOM);
+      expect(gameBoard.getAllShipsSunkState()).toBeFalsy(); // Not all ship are sunk
 
       // All remaining ships receive a third hit
-      gameBoard.receiveAttack(6, 2, player, player); // Second ship has sunk
-      gameBoard.receiveAttack(9, 7, player, player); // Third ship has sunk
-      gameBoard.receiveAttack(5, 6, player, player);
-      gameBoard.receiveAttack(0, 6, player, player);
-      expect(gameBoard._getAllShipsSunkState()).toBeFalsy(); // Not all ship are sunk
+      gameBoard.receiveAttack(6, 2, player, player, dummyGameboardDOM); // Second ship has sunk
+      gameBoard.receiveAttack(9, 7, player, player, dummyGameboardDOM); // Third ship has sunk
+      gameBoard.receiveAttack(5, 6, player, player, dummyGameboardDOM);
+      gameBoard.receiveAttack(0, 6, player, player, dummyGameboardDOM);
+      expect(gameBoard.getAllShipsSunkState()).toBeFalsy(); // Not all ship are sunk
 
       // All remaining ships receive a fourth hit
-      gameBoard.receiveAttack(6, 6, player, player); // Fourth ship has sunk
-      gameBoard.receiveAttack(0, 7, player, player);
-      expect(gameBoard._getAllShipsSunkState()).toBeFalsy(); // Not all ship are sunk
+      gameBoard.receiveAttack(6, 6, player, player, dummyGameboardDOM); // Fourth ship has sunk
+      gameBoard.receiveAttack(0, 7, player, player, dummyGameboardDOM);
+      expect(gameBoard.getAllShipsSunkState()).toBeFalsy(); // Not all ship are sunk
 
       // The gameboard itself should report that not all ships are sunk now
       expect(gameBoard.allShipsSunk).toBeFalsy();
 
       // Last ship recieves a fifth hit
-      gameBoard.receiveAttack(0, 7, player, player); // Fifth ship has sunk
-      expect(gameBoard._getAllShipsSunkState()).toBeTruthy(); // All ships are sunk
+      gameBoard.receiveAttack(0, 7, player, player, dummyGameboardDOM); // Fifth ship has sunk
+      expect(gameBoard.getAllShipsSunkState()).toBeTruthy(); // All ships are sunk
 
       // The gameboard itself should report that all ships are sunk now
       expect(gameBoard.allShipsSunk).toBeTruthy();

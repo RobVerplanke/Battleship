@@ -1,7 +1,10 @@
 /* eslint-disable class-methods-use-this */
 const Ship = require('./battleship.js');
+// const validateInput = require('./utils/validateInput.js'); // Necessary for external calls
 const validatePlacement = require('./utils/validatePlacement.js');
-const commonFunctions = require('./utils/commonFunctions.js');
+const validatePlayer = require('./utils/validatePlayer.js');
+const gameboardDOM = require('../componentsDOM/gameboard.js');
+const utils = require('./utils/utils.js');
 
 const SHIP_AMOUNT = 5; // Default amount of ships for each player
 const BOARD_SIZE = 10; // Default dimensions for the game board
@@ -18,16 +21,16 @@ class Gameboard {
 
   // Build the game board as a 2D-array grid
   _buildGameBoard() {
-    for (let i = 0; i < this._getBoardSize(); i++) {
-      this._getGrid()[i] = [];
-      for (let j = 0; j < this._getBoardSize(); j++) {
+    for (let i = 0; i < this.getBoardSize(); i++) {
+      this.getGrid()[i] = [];
+      for (let j = 0; j < this.getBoardSize(); j++) {
         this._setCellValue(i, j, 'empty'); // Initialize each cell as 'empty'
       }
     }
   }
 
   // Return size of the board
-  _getBoardSize() {
+  getBoardSize() {
     return this.boardSize;
   }
 
@@ -36,7 +39,7 @@ class Gameboard {
   }
 
   // Return the grid array
-  _getGrid() {
+  getGrid() {
     return this.grid;
   }
 
@@ -47,12 +50,12 @@ class Gameboard {
 
   // Returns the value of the corresponding grid cell
   _getCellValue(axisX, axisY) {
-    return this._getGrid()[axisX][axisY];
+    return this.getGrid()[axisX][axisY];
   }
 
   // Set the value of a single cell
   _setCellValue(axisX, axisY, value) {
-    this._getGrid()[axisX][axisY] = value;
+    this.getGrid()[axisX][axisY] = value;
   }
 
   // Return the 'missed attacks' array
@@ -65,8 +68,8 @@ class Gameboard {
     this._getMissedAttacks().add([axisX, axisY]);
   }
 
-  // Return whether or not al ships are sunk // FOR TESTING
-  _getAllShipsSunkState() {
+  // Return whether or not al ships are sunk
+  getAllShipsSunkState() {
     return this.allShipsSunk;
   }
 
@@ -75,13 +78,19 @@ class Gameboard {
     this.allShipsSunk = newState;
   }
 
+  // Switch turns between players, called after each received attack
+  switchPlayers(playerOne, playerTwo) {
+    playerOne.toggleActiveState();
+    playerTwo.toggleActiveState();
+  }
+
   // Iterate through grid cells and store every ship that is sunk
   _getAllSunkenShips() {
     const allSunkenShipsList = new Set(); // List of all sunken ships
 
-    for (let i = 0; i < this._getBoardSize(); i++) {
-      for (let j = 0; j < this._getBoardSize(); j++) {
-        commonFunctions.validateCellValue(allSunkenShipsList, this._getGrid()[i][j]);
+    for (let i = 0; i < this.getBoardSize(); i++) {
+      for (let j = 0; j < this.getBoardSize(); j++) {
+        utils.validateCellValue(allSunkenShipsList, this.getGrid()[i][j]);
       }
     }
     return allSunkenShipsList;
@@ -92,7 +101,7 @@ class Gameboard {
     const allSunkenShipsList = this._getAllSunkenShips(); // List of all sunken ships
 
     // Check if the amount of sunken ships is the same as the total amount of ships
-    if (allSunkenShipsList.size === SHIP_AMOUNT && !this._getAllShipsSunkState()) {
+    if (allSunkenShipsList.size === SHIP_AMOUNT && !this.getAllShipsSunkState()) {
       this._setAllShipsSunkState(true); // Send message to the gameboard that all ships are sunk
       return true;
     }
@@ -111,7 +120,7 @@ class Gameboard {
 
   // Add a ship to the grid at the given coordinates
   _addShipToGrid(axisX, axisY, shipSize, orientation) {
-    const newShip = commonFunctions.shipFactory(shipSize, orientation);
+    const newShip = utils.shipFactory(shipSize, orientation);
 
     if (orientation === 'horizontal') { // Spread ship horizontally over grid cells
       for (let i = 0; i < shipSize; i++) this._setCellValue(axisX + i, axisY, newShip);
@@ -128,7 +137,7 @@ class Gameboard {
     const validateInput = require('./utils/validateInput.js'); // Necessary for external calls
 
     // Check if values are valid coordinates on the board
-    validateInput.validateCoordinates(this._getBoardSize(), axisX, axisY);
+    validateInput.validateCoordinates(this.getBoardSize(), axisX, axisY);
 
     // Check if size of ship is valid
     validateInput.validateShipSize(shipSize);
@@ -137,7 +146,7 @@ class Gameboard {
     validateInput.validateOrientation(orientation);
 
     // Validate placement: Prevent that ships are placed outside the board boundaries
-    validatePlacement.checkBoardBoundaries(this._getBoardSize(), axisX, axisY, shipSize, orientation);
+    validatePlacement.checkBoardBoundaries(this.getBoardSize(), axisX, axisY, shipSize, orientation);
 
     // Validate placement: Prevent that ships overlap each other
     validatePlacement.checkShipOverlap(this, axisX, axisY, shipSize, orientation);
@@ -149,16 +158,16 @@ class Gameboard {
 
   // Gameboard reveived an attack, determine whether or not an attack was succesful, switch players
   // In case of a hit tell the ship it was hit, else store the coordinates of the missed attack
-  receiveAttack(axisX, axisY, activePlayer, opponent) {
+  receiveAttack(axisX, axisY, activePlayer, opponent, opponentGameBoardDOM) {
 
     // eslint-disable-next-line global-require
     const validateInput = require('./utils/validateInput.js'); // Necessary to import here for external calls
 
     // Check if values are valid coordinates on the board
-    validateInput.validateCoordinates(this._getBoardSize(), axisX, axisY);
+    validateInput.validateCoordinates(this.getBoardSize(), axisX, axisY);
 
     // Check if player values are defined
-    validateInput.validatePlayers(activePlayer, opponent);
+    validatePlayer.validatePlayers(activePlayer, opponent);
 
     // Check the cell that reveived an attack, it can only be 'empty' or a ship
     const attackedCell = this._getCellValue(axisX, axisY);
@@ -169,20 +178,15 @@ class Gameboard {
     if (attackedCell instanceof Ship) { // The attack hit a ship
       const gameBoard = this;
       this._sendHit(gameBoard, attackedCell); // Send 'hit' message to the corresponding ship
-
+      gameboardDOM.setCellClass(opponentGameBoardDOM, axisX, axisY, 'gridcell-ship-hit'); // Set cell style
       return true;
     }
 
     // Attack didn't hit a ship
     this._setMissedAttacks(axisX, axisY); // Store coordinates of the missed attack
+    gameboardDOM.setCellClass(opponentGameBoardDOM, axisX, axisY, 'gridcell-missed'); // Set cell style
 
     return false;
-  }
-
-  // Switch turns between players, called after each received attack
-  switchPlayers(playerOne, playerTwo) {
-    playerOne.toggleActiveState();
-    playerTwo.toggleActiveState();
   }
 }
 
