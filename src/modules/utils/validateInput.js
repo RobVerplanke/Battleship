@@ -3,7 +3,7 @@
 const Gameboard = require('../gameboard.js'); // Only used to check if a gameboard argument is a instance of this class
 
 // Check if given coordinates are actual coordinates on the board
-function validateCoordinates(boardSize, axisX, axisY) {
+function validateCoordinates(axisX, axisY, boardSize = 10) {
 
   if (axisX === undefined || axisY === undefined
     || typeof axisX !== 'number' || typeof axisY !== 'number') {

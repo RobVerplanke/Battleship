@@ -7,7 +7,7 @@ function validatePlayers(playerOne, playerTwo) {
 }
 
 function validateActivePlayer(activePlayer) {
-  if (activePlayer.active === false) return false;
+  if (!activePlayer.active) return false;
   return true;
 }
 

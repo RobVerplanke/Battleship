@@ -1,7 +1,8 @@
 /* eslint-disable class-methods-use-this */
 const validateInput = require('./utils/validateInput.js');
-const validatePlayer = require('./utils/validatePlayer.js');
 const utils = require('./utils/utils.js');
+
+const BOARD_SIZE = 10;
 
 class Player {
   constructor(name = 'Player') {
@@ -45,14 +46,14 @@ class Player {
   }
 
   // Generate a random valid coordinate to attack
-  generateRandomCoordinate(gameBoard) {
+  generateRandomCoordinate() {
     const newCoordinate = [];
     let axisX = null;
     let axisY = null;
 
     // Keep generating a coordinate until it's valid
-    axisX = (utils.getRandomInt(gameBoard.getBoardSize()));
-    axisY = (utils.getRandomInt(gameBoard.getBoardSize()));
+    axisX = utils.getRandomInt(BOARD_SIZE);
+    axisY = utils.getRandomInt(BOARD_SIZE);
 
     // Prevent that a grid cell is attacked more than once
     this._validateSentAttacks(axisX, axisY);
@@ -64,25 +65,24 @@ class Player {
   }
 
   // Send a attack to a specific grid cell
-  sendAttack(gameBoard, opponent, opponentGameBoardDOM, axisX, axisY) {
+  sendAttack(axisX, axisY) {
 
-    // Check if it's current players turn to play
-    if (!validatePlayer.validateActivePlayer(this)) return false;
-
-    // Check if gameboard value is actually a gameboard
-    validateInput.validateGameBoard(gameBoard);
+    // Only allowed to play when it's players turn
+    if (!this._getActiveState()) throw new Error('It\'s not your turn!');
 
     // Check if values are valid coordinates on the board
-    validateInput.validateCoordinates(gameBoard.getBoardSize(), axisX, axisY);
+    validateInput.validateCoordinates(axisX, axisY, BOARD_SIZE);
 
     // Prevent that a grid cell is attacked more than once
     this._validateSentAttacks(axisX, axisY);
 
-    // Send valided coordinates to a validated gameboard
-    gameBoard.receiveAttack(axisX, axisY, this, opponent, opponentGameBoardDOM);
+    // Send attack to opponents gameboard
 
     // Store attacked coordinates
     this._setSentAttacks(axisX, axisY);
+
+    // Switch players turns
+    this.toggleActiveState();
 
     return true;
   }

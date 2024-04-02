@@ -15,6 +15,7 @@ describe('Gameboard', () => {
   
     it('throws error when input is empty', () => {
       const gameBoard = new Gameboard();
+      gameBoard.toggleActiveState();
     
       expect(() => {
         gameBoard.placeShip(); // No arguments given
@@ -207,6 +208,7 @@ describe('Gameboard', () => {
 
     it('throws error if coordinates are left empty', () => {
       const gameBoard = new Gameboard();
+      gameBoard.toggleActiveState();
   
       expect(() => {
         gameBoard.receiveAttack(); // Input is empty
@@ -215,6 +217,7 @@ describe('Gameboard', () => {
 
     it('throws error if input is a space', () => {
       const gameBoard = new Gameboard();
+      gameBoard.toggleActiveState();
   
       expect(() => {
         gameBoard.receiveAttack(' '); // Value is a space
@@ -223,6 +226,7 @@ describe('Gameboard', () => {
 
     it('throws error if only one coordinate is given', () => {
       const gameBoard = new Gameboard();
+      gameBoard.toggleActiveState();
   
       expect(() => {
         gameBoard.receiveAttack(1); // Only one coordinate
@@ -231,6 +235,7 @@ describe('Gameboard', () => {
 
     it('throws error if input is not a number', () => {
       const gameBoard = new Gameboard();
+      gameBoard.toggleActiveState();
   
       expect(() => {
         gameBoard.receiveAttack('axisX'); // One value which is not a number
@@ -240,6 +245,7 @@ describe('Gameboard', () => {
 
     it('throws error if one coordinate is not a number', () => {
       const gameBoard = new Gameboard();
+      gameBoard.toggleActiveState();
   
       expect(() => {
         gameBoard.receiveAttack(1, 'axisY'); // Second value is not a number
@@ -249,6 +255,7 @@ describe('Gameboard', () => {
 
     it('throws error if coordinates are outside board boundaries', () => {
       const gameBoard = new Gameboard();
+      gameBoard.toggleActiveState();
   
       expect(() => {
         gameBoard.receiveAttack(11, 2); // Coordinate outside board
@@ -260,34 +267,31 @@ describe('Gameboard', () => {
 
     it('should return true when an attack hits target', () => {
       const gameBoard = new Gameboard();
-      const player = new Player(); // Dummy
-      const dummyGameboardDOM = ''; // Dummy
-  
+      gameBoard.toggleActiveState();
+
       gameBoard.placeShip(1, 2, 3, 'horizontal'); // Place target
-      const result = gameBoard.receiveAttack(1, 2, player, player, dummyGameboardDOM); // Hit the target
+      const result = gameBoard.receiveAttack(1, 2); // Hit the target
 
       expect(result).toBeTruthy();
     })
 
     it('should return false when an attack missed target', () => {
       const gameBoard = new Gameboard();
-      const player = new Player(); // Dummy
-      const dummyGameboardDOM = ''; // Dummy
+      gameBoard.toggleActiveState();
   
       gameBoard.placeShip(1, 2, 3, 'horizontal'); // Place target
-      const result = gameBoard.receiveAttack(1, 3, player, player, dummyGameboardDOM); // Miss the target
+      const result = gameBoard.receiveAttack(1, 3); // Miss the target
 
       expect(result).toBeFalsy();
     })
 
     it('calls hit method on attacked ship', () => {
-      const player = new Player(); // Dummy
-      const dummyGameboardDOM = ''; // Dummy
       const gameBoard = new Gameboard();
       const mockHit = jest.spyOn(gameBoard, '_sendHit'); // Spy on _sendHit method
+      gameBoard.toggleActiveState();
 
       gameBoard.placeShip(1, 2, 3, 'horizontal'); // Place target
-      gameBoard.receiveAttack(2, 2, player, player, dummyGameboardDOM); // Hit the target
+      gameBoard.receiveAttack(2, 2); // Hit the target
       
       expect(mockHit).toBeCalled(); // _sendHit method is called
 
@@ -316,25 +320,23 @@ describe('Gameboard', () => {
 
     it('stores the coordinates of each missed shot', () => {
       const gameBoard = new Gameboard();
-      const player = new Player(); // Dummy
-      const dummyGameboardDOM = ''; // Dummy
+      gameBoard.toggleActiveState();
       
-      gameBoard.receiveAttack(1, 1, player, player, dummyGameboardDOM); // Missed attack
+      gameBoard.receiveAttack(1, 1); // Missed attack
       expect(Array.from(gameBoard.missedAttacks)).toEqual([[1, 1]]);
 
-      gameBoard.receiveAttack(3, 8 ,player, player, dummyGameboardDOM); // Missed attack
+      gameBoard.receiveAttack(3, 8); // Missed attack
       expect(Array.from(gameBoard.missedAttacks)).toEqual([[1, 1], [3, 8]]);
 
       gameBoard.placeShip(5, 9, 3, 'horizontal'); // Place target
-      gameBoard.receiveAttack(6, 9, player, player, dummyGameboardDOM); // Attack was a hit
+      gameBoard.receiveAttack(6, 9); // Attack was a hit
       expect(Array.from(gameBoard.missedAttacks)).toEqual([[1, 1], [3, 8]]); // Coordinate was not stored
 
     })
 
     it('should report whether or not all ships are sunk, with all ships on the board', () => {
       const gameBoard = new Gameboard();
-      const player = new Player(); // Dummy
-      const dummyGameboardDOM = ''; // Dummy
+      gameBoard.toggleActiveState();
 
       // Place all 5 ships
       gameBoard.placeShip(1, 1, 2, 'vertical'); // Place ship with size 2
@@ -345,43 +347,51 @@ describe('Gameboard', () => {
       expect(gameBoard.getAllShipsSunkState()).toBeFalsy(); // Not all ship are sunk
 
       // All ships receive one hit
-      gameBoard.receiveAttack(1, 1, player, player, dummyGameboardDOM); // No ship has sunk
-      gameBoard.receiveAttack(4, 2, player, player, dummyGameboardDOM);
-      gameBoard.receiveAttack(9, 5, player, player, dummyGameboardDOM);
-      gameBoard.receiveAttack(3, 6, player, player, dummyGameboardDOM);
-      gameBoard.receiveAttack(0, 4, player, player, dummyGameboardDOM);
+      gameBoard.receiveAttack(1, 1); // No ship has sunk
+      gameBoard.receiveAttack(4, 2);
+      gameBoard.receiveAttack(9, 5);
+      gameBoard.receiveAttack(3, 6);
+      gameBoard.receiveAttack(0, 4);
       expect(gameBoard.getAllShipsSunkState()).toBeFalsy(); // Not all ship are sunk
 
       // All ships receive a second hit
-      gameBoard.receiveAttack(1, 2, player, player, dummyGameboardDOM); // First ship has sunk
-      gameBoard.receiveAttack(5, 2, player, player, dummyGameboardDOM);
-      gameBoard.receiveAttack(9, 6, player, player, dummyGameboardDOM);
-      gameBoard.receiveAttack(4, 6, player, player, dummyGameboardDOM);
-      gameBoard.receiveAttack(0, 5, player, player, dummyGameboardDOM);
+      gameBoard.receiveAttack(1, 2); // First ship has sunk
+      gameBoard.receiveAttack(5, 2);
+      gameBoard.receiveAttack(9, 6);
+      gameBoard.receiveAttack(4, 6);
+      gameBoard.receiveAttack(0, 5);
       expect(gameBoard.getAllShipsSunkState()).toBeFalsy(); // Not all ship are sunk
 
       // All remaining ships receive a third hit
-      gameBoard.receiveAttack(6, 2, player, player, dummyGameboardDOM); // Second ship has sunk
-      gameBoard.receiveAttack(9, 7, player, player, dummyGameboardDOM); // Third ship has sunk
-      gameBoard.receiveAttack(5, 6, player, player, dummyGameboardDOM);
-      gameBoard.receiveAttack(0, 6, player, player, dummyGameboardDOM);
+      gameBoard.receiveAttack(6, 2); // Second ship has sunk
+      gameBoard.receiveAttack(9, 7); // Third ship has sunk
+      gameBoard.receiveAttack(5, 6);
+      gameBoard.receiveAttack(0, 6);
       expect(gameBoard.getAllShipsSunkState()).toBeFalsy(); // Not all ship are sunk
 
       // All remaining ships receive a fourth hit
-      gameBoard.receiveAttack(6, 6, player, player, dummyGameboardDOM); // Fourth ship has sunk
-      gameBoard.receiveAttack(0, 7, player, player, dummyGameboardDOM);
+      gameBoard.receiveAttack(6, 6); // Fourth ship has sunk
+      gameBoard.receiveAttack(0, 7);
       expect(gameBoard.getAllShipsSunkState()).toBeFalsy(); // Not all ship are sunk
 
       // The gameboard itself should report that not all ships are sunk now
       expect(gameBoard.allShipsSunk).toBeFalsy();
 
       // Last ship recieves a fifth hit
-      gameBoard.receiveAttack(0, 7, player, player, dummyGameboardDOM); // Fifth ship has sunk
+      gameBoard.receiveAttack(0, 7); // Fifth ship has sunk
       expect(gameBoard.getAllShipsSunkState()).toBeTruthy(); // All ships are sunk
 
       // The gameboard itself should report that all ships are sunk now
       expect(gameBoard.allShipsSunk).toBeTruthy();
-      
     })
+
+    it('should switch players and gameboards turns after a attack', () => {
+
+    })
+
+    it('should allow to place attacks on opponents board only', () => {
+
+    })
+
   });
 });

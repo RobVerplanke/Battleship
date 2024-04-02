@@ -62,10 +62,7 @@ main{
 .gameboard{
     background-color: gray;
     outline: solid 5px black;
-}
-
-.gameboard-active{
-    outline: solid 5px rgb(151, 0, 0);
+    border-radius: 6px;
 }
 
 #player-one-gameboard, #player-two-gameboard{
@@ -85,7 +82,7 @@ main{
 }
 
 .gridcell-ship{
-    z-index: 10;
+    z-index: 5;
     background-color: rgb(40, 40, 40);
 }
 
