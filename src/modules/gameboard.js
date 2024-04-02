@@ -1,61 +1,68 @@
-/* eslint-disable no-useless-catch */
-
+/* eslint-disable class-methods-use-this */
 const Ship = require('./battleship.js');
-const validateInput = require('./utils/validateInput.js');
+
+const validateInput = require('./utils/validateInput.js'); // Necessary for external calls
 const validatePlacement = require('./utils/validatePlacement.js');
+const utils = require('./utils/utils.js');
 
 const SHIP_AMOUNT = 5; // Default amount of ships for each player
+const BOARD_SIZE = 10;
+
 
 class Gameboard {
-  constructor() {
-    this.boardSize = 10; // Width and height
+  constructor(player) {
+    this.boardSize = BOARD_SIZE; // Width and height
     this.grid = []; // The game board represented as a 2D array
     this.missedAttacks = new Set(); // Tracks missed attacks
     this.allShipsSunk = false; // Indicates whether or not all ships have sunk
+    this.player = player; // Who plays on this board
+    this.active = false; // Determines this board is active
 
     this._buildGameBoard(); // Initialize the game board
   }
 
   // Build the game board as a 2D-array grid
   _buildGameBoard() {
-    for (let i = 0; i < this._getBoardSize(); i++) {
-      this._getGrid()[i] = [];
-      for (let j = 0; j < this._getBoardSize(); j++) {
+    for (let i = 0; i < this.getBoardSize(); i++) {
+      this.getGrid()[i] = [];
+      for (let j = 0; j < this.getBoardSize(); j++) {
         this._setCellValue(i, j, 'empty'); // Initialize each cell as 'empty'
       }
     }
   }
 
   // Return size of the board
-  _getBoardSize() {
+  getBoardSize() {
     return this.boardSize;
   }
 
+  _setBoardSize(newSize) {
+    this.boardSize = newSize;
+  }
+
   // Return the grid array
-  _getGrid() {
+  getGrid() {
     return this.grid;
+  }
+
+  // Clear the gameboard from grid cells
+  _clearGrid() {
+    this.grid = [];
+  }
+
+  // Switch turns between gameboards
+  toggleActiveState() {
+    this.active = !this.active;
   }
 
   // Returns the value of the corresponding grid cell
   _getCellValue(axisX, axisY) {
-    return this._getGrid()[axisX][axisY];
+    return this.getGrid()[axisX][axisY];
   }
 
   // Set the value of a single cell
   _setCellValue(axisX, axisY, value) {
-    this._getGrid()[axisX][axisY] = value;
-  }
-
-  // Selects only sunken ships
-  static _validateCellValue(allSunkenShipsList, cellValue) {
-    const newList = allSunkenShipsList;
-
-    if (cellValue instanceof Ship) { // Cell contains (part of) a ship
-      const ship = cellValue;
-      if (ship.isSunk()) newList.add(ship); // Add sunken ship to list
-    }
-
-    return newList;
+    this.getGrid()[axisX][axisY] = value;
   }
 
   // Return the 'missed attacks' array
@@ -68,8 +75,8 @@ class Gameboard {
     this._getMissedAttacks().add([axisX, axisY]);
   }
 
-  // Return whether or not al ships are sunk // FOR TESTING
-  _getAllShipsSunkState() {
+  // Return whether or not al ships are sunk
+  getAllShipsSunkState() {
     return this.allShipsSunk;
   }
 
@@ -78,43 +85,39 @@ class Gameboard {
     this.allShipsSunk = newState;
   }
 
+  // Switch turns between players, called after each received attack
+  switchPlayers(playerOne, playerTwo) {
+    playerOne.toggleActiveState();
+    playerTwo.toggleActiveState();
+  }
 
   // Iterate through grid cells and store every ship that is sunk
   _getAllSunkenShips() {
     const allSunkenShipsList = new Set(); // List of all sunken ships
 
-    for (let i = 0; i < this._getBoardSize(); i++) {
-      for (let j = 0; j < this._getBoardSize(); j++) {
-        Gameboard._validateCellValue(allSunkenShipsList, this._getGrid()[i][j]);
+    for (let i = 0; i < this.getBoardSize(); i++) {
+      for (let j = 0; j < this.getBoardSize(); j++) {
+        utils.validateCellValue(allSunkenShipsList, this.getGrid()[i][j]);
       }
     }
-
     return allSunkenShipsList;
   }
-
 
   // Validate whether or not all ships on the board are sunk
   _validateAllShipsSunkState() {
     const allSunkenShipsList = this._getAllSunkenShips(); // List of all sunken ships
 
     // Check if the amount of sunken ships is the same as the total amount of ships
-    if (allSunkenShipsList.size === SHIP_AMOUNT && !this._getAllShipsSunkState()) {
+    if (allSunkenShipsList.size === SHIP_AMOUNT && !this.getAllShipsSunkState()) {
       this._setAllShipsSunkState(true); // Send message to the gameboard that all ships are sunk
       return true;
     }
-
     return false;
-  }
-
-
-  // Used for creating ship 'parts' when one ship has to be placed over multiple cells
-  static _shipFactory(shipSize, orientation) {
-    return new Ship(shipSize, orientation);
   }
 
   // Send hit message to attacked ship, check if it sunk as a result of this hit,
   // then validate whether or not it was the last surviving ship on the board
-  static _sendHit(gameBoard, targetedShip) {
+  _sendHit(gameBoard, targetedShip) {
     targetedShip.hit(); // Send a 'hit' message to the ship that was attacked
 
     // If the ship has sunk, check if all ships are sunk now
@@ -124,7 +127,7 @@ class Gameboard {
 
   // Add a ship to the grid at the given coordinates
   _addShipToGrid(axisX, axisY, shipSize, orientation) {
-    const newShip = Gameboard._shipFactory(shipSize, orientation);
+    const newShip = utils.shipFactory(shipSize, orientation);
 
     if (orientation === 'horizontal') { // Spread ship horizontally over grid cells
       for (let i = 0; i < shipSize; i++) this._setCellValue(axisX + i, axisY, newShip);
@@ -138,7 +141,7 @@ class Gameboard {
   placeShip(axisX, axisY, shipSize, orientation) {
 
     // Check if values are valid coordinates on the board
-    validateInput.validateCoordinates(this._getBoardSize(), axisX, axisY);
+    validateInput.validateCoordinates(axisX, axisY);
 
     // Check if size of ship is valid
     validateInput.validateShipSize(shipSize);
@@ -147,9 +150,10 @@ class Gameboard {
     validateInput.validateOrientation(orientation);
 
     // Validate placement: Prevent that ships are placed outside the board boundaries
-    validatePlacement.checkBoardBoundaries(this._getBoardSize(), axisX, axisY, shipSize, orientation);
-
+    validatePlacement.checkBoardBoundaries(this.getBoardSize(), axisX, axisY, shipSize, orientation);
     // Validate placement: Prevent that ships overlap each other
+
+    // console.log(this, axisX, axisY, shipSize, orientation);
     validatePlacement.checkShipOverlap(this, axisX, axisY, shipSize, orientation);
 
     // All values and the placement conditions are validated, add a ship to the grid
@@ -157,19 +161,23 @@ class Gameboard {
   }
 
 
-  // Determine whether or not an attack was succesful
+  // Gameboard reveived an attack, determine whether or not an attack was succesful, switch players
   // In case of a hit tell the ship it was hit, else store the coordinates of the missed attack
   receiveAttack(axisX, axisY) {
 
+    if (!this.active) throw new Error('board is not active');
+
     // Check if values are valid coordinates on the board
-    validateInput.validateCoordinates(this._getBoardSize(), axisX, axisY);
+    validateInput.validateCoordinates(axisX, axisY);
 
     // Check the cell that reveived an attack, it can only be 'empty' or a ship
     const attackedCell = this._getCellValue(axisX, axisY);
 
+    // Disable gameboards active state
+
     if (attackedCell instanceof Ship) { // The attack hit a ship
       const gameBoard = this;
-      Gameboard._sendHit(gameBoard, attackedCell); // Send 'hit' message to the corresponding ship
+      this._sendHit(gameBoard, attackedCell); // Send 'hit' message to the corresponding ship
       return true;
     }
 
@@ -180,4 +188,6 @@ class Gameboard {
   }
 }
 
+
 module.exports = Gameboard;
+

@@ -1,0 +1,33 @@
+/* Reset styles */
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+/* Custom properties */
+
+:root{
+    --options-holder-heigth: 140px;
+} 
+
+
+/* Overall layout */ 
+
+/* This setup sets height of main section to fit the screen*/
+html, body {
+    min-height: 100vh;
+}
+
+header{
+    height: var(--options-holder-heigth);
+}
+
+main{
+    height: calc(100vh - var(--options-holder-heigth));
+}
+
+
+/* Components */

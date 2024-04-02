@@ -1,0 +1,97 @@
+/* Reset styles */
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+/* Custom properties */
+
+:root{
+    --options-holder-heigth: 140px;
+
+} 
+
+
+/* Overall layout */
+
+html, body {
+    background-color: rgb(96, 140, 175);
+    min-height: 100vh;
+}
+
+header{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: var(--options-holder-heigth);
+}
+
+main{
+    height: calc(100vh - var(--options-holder-heigth));
+
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-evenly;
+}
+
+
+/* Components */
+
+#player-one-gameboard-holder, #player-two-gameboard-holder{
+    height: 400px;
+    width: 400px;
+}
+
+.player-name{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 10px 0 10px 0;
+}
+
+.gameboard-holder{
+    height: 400px;
+}
+
+.gameboard{
+    background-color: gray;
+    outline: solid 5px black;
+    border-radius: 6px;
+}
+
+#player-one-gameboard, #player-two-gameboard{
+    display: grid; 
+    grid-template-columns: repeat(10, auto);
+}
+
+.gridcell{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 12px;
+    outline: solid 1px lightgray;
+    width: 40px;
+    height: 40px;
+}
+
+.gridcell-ship{
+    z-index: 5;
+    background-color: rgb(40, 40, 40);
+}
+
+.gridcell-missed{
+    z-index: 10;
+    background-color: rgb(193, 193, 193);
+}
+
+.gridcell-ship-hit{
+    z-index: 10;
+    background-color: rgb(215, 0, 0);
+}
