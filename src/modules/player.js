@@ -3,8 +3,6 @@
 const validateInput = require('./utils/validateInput.js');
 const utils = require('./utils/utils.js');
 
-const BOARD_SIZE = 10;
-
 class Player {
   constructor(gameControl, name = 'Player') {
     this.name = name; // Players name becomes 'Player' if no name was given
@@ -34,23 +32,16 @@ class Player {
     this.active = !this.active;
   }
 
-  // Compare coordinate with coordinates that were already attacked
-  _validateSentAttacks(axisX, axisY) {
-    if (this.getSentAttacks().find((coordinate) => JSON.stringify(coordinate) === JSON.stringify([axisX, axisY]))) {
-      throw new Error('Cell already attacked!');
-    }
-  }
-
   // Generate a random valid coordinate to attack
   generateRandomCoordinate() {
     const newCoordinate = [];
     let axisX = 0;
     let axisY = 0;
 
-    // Keep generating a coordinate until it's valid
-    while (this._validateSentAttacks(axisX, axisY) === false) {
-      axisX = utils.getRandomInt(BOARD_SIZE);
-      axisY = utils.getRandomInt(BOARD_SIZE);
+    // Keep generating a coordinate until it is valid
+    while (validateInput.validateSentAttacks(this, axisX, axisY) === false) {
+      axisX = utils.getRandomInt(this.gameControl.getBoardSize());
+      axisY = utils.getRandomInt(this.gameControl.getBoardSize());
     }
 
     // Add valid coordinate to list
@@ -59,7 +50,7 @@ class Player {
     return newCoordinate;
   }
 
-  // Send an attack to a specific grid cell
+  // Send a attack to a specific grid cell
   sendAttack(axisX, axisY, cell) {
 
     // Check if values are valid coordinates on the board

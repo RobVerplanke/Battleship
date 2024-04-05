@@ -10,18 +10,6 @@ function getRandomInt(boardSize) {
   return Math.floor(Math.random() * boardSize);
 }
 
-// Adds a sunken ship to the list of all sunken ships
-function validateCellValue(allSunkenShipsList, cellValue) {
-  const newList = allSunkenShipsList;
-
-  if (cellValue instanceof Ship) { // Cell contains (part of) a ship
-    const ship = cellValue;
-    if (ship.isSunk()) newList.add(ship); // Add sunken ship to list
-  }
-
-  return newList;
-}
-
 // Reports when all ships on one of the boards are sunken
 function isGameOver(gameboardOne, gameboardTwo) {
   if (gameboardOne.getAllShipsSunkState() || gameboardTwo.getAllShipsSunkState()) {
@@ -31,7 +19,6 @@ function isGameOver(gameboardOne, gameboardTwo) {
 
 module.exports = {
   shipFactory,
-  validateCellValue,
   getRandomInt,
   isGameOver,
 };

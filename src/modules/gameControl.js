@@ -6,13 +6,15 @@ const utilsDOM = require('../componentsDOM/utilsDOM.js');
 
 class GameController {
   constructor(
-    playerOne = {}, // Properties are empty if arguments are left empty
+    playerOne = {}, // Properties are empty by default
     playerTwo = {},
     gameBoardOne = {},
     gameBoardTwo = {},
     gameboardDOMOne = {},
     gameboardDOMTwo = {},
   ) {
+
+    this.boardSize = 10; // Default gameboard size
 
     // Create a new set of players
     this.playerOne = playerOne;
@@ -22,12 +24,17 @@ class GameController {
     this.gameboardOne = gameBoardOne;
     this.gameboardTwo = gameBoardTwo;
 
+    // Set gameboard size of both gameboards
+    this.gameboardOne.boardSize = this.boardSize;
+    this.gameboardTwo.boardSize = this.boardSize;
+
     // Create new gameboards in the DOM
     this.gameboardDOMOne = gameboardDOMOne;
     this.gameboardDOMTwo = gameboardDOMTwo;
   }
 
-  // Stiwch players turns
+
+  // Switch players turns
   _togglePlayersActiveStates() {
     this.playerOne.active = !this.playerOne.active;
     this.playerTwo.active = !this.playerTwo.active;
@@ -35,9 +42,11 @@ class GameController {
 
   // Returns the opponents gameboard
   _getOpponentGameboard(currentPlayer) {
-    if (currentPlayer === this.playerOne) return this.gameboardTwo;
-    if (currentPlayer === this.playerTwo) return this.gameboardOne;
-    return false;
+    return (currentPlayer === this.playerOne) ? this.gameboardTwo : this.gameboardOne;
+  }
+
+  getBoardSize() {
+    return this.boardSize;
   }
 
   // Handle incoming attack
@@ -50,7 +59,7 @@ class GameController {
     validateInput.validateCoordinates(axisX, axisY);
 
     // Check if cell is not already attacked
-    validateInput.validateSentAttacks(axisX, axisY, curentPlayer);
+    validateInput.validateSentAttacks(curentPlayer, axisX, axisY);
 
     // Send validated data to perform the attack
     this._performAttack(axisX, axisY, this._getOpponentGameboard(curentPlayer), cell);
@@ -62,13 +71,8 @@ class GameController {
     // Send attack to corresponding gameboard
     targetGameboard.receiveAttack(axisX, axisY);
 
-    // Visually hihglight attacked cell when it contains a ship
-    if (cell.getAttribute('data-hasShip')) {
-      utilsDOM.addElementClass(cell, 'gridcell-ship-hit');
-    } else { // Visually disable attacked cell when it's empty
-      utilsDOM.setMissedCellContent(cell);
-      utilsDOM.addElementClass(cell, 'gridcell-missed');
-    }
+    // Set the style of a cell after a attack
+    utilsDOM.addCellClass(cell);
 
     // Check if all ships sunk on one of the gameboards
     utils.isGameOver(this.gameboardOne, this.gameboardTwo);

@@ -10,8 +10,8 @@ const playerOne = new Player(gameControl, 'Player one');
 const playerTwo = new Player(gameControl, 'Player two');
 
 // Create new main gameboards with its corresponding opponent
-const gameboardOne = new Gameboard('gameboardOne');
-const gameboardTwo = new Gameboard('gameboardTwo');
+const gameboardOne = new Gameboard();
+const gameboardTwo = new Gameboard();
 
 // Create new gameboards in the DOM
 const gameboardDOMOne = new GameboardDOM('#player-one-gameboard');

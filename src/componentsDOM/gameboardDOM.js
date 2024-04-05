@@ -27,25 +27,34 @@ class GameboardDOM {
   // Create grid of cells, based on the grid of the given main gameboard
   generateGridCells(gameboard, player) {
 
-    // Iterate through all grid cells of the main gameboard
+    // Create a new cell in the DOM for each grid cell on the main gameboard
     for (let i = this._getBoardSize(); i > 0; i--) {
       for (let j = 0; j < this._getBoardSize(); j++) {
-        const cell = utilsDOM.createNewElement('div'); // Create a new cell in the DOM for each grid cell
+
+        // New cell element in the DOM
+        const cell = utilsDOM.createNewElement('div');
 
         // Set coordinates as data-attribute value
         utilsDOM.setCellDataCoordinateAttribute(cell, i, j);
 
         // Validate the cell grid value at the current coordinates
-        if (gameboard.getGrid()[j][i - 1] instanceof Ship) { // Grid cell contains a ship
+        if (gameboard.getGrid()[j][i - 1] instanceof Ship) {
+          // Grid cell contains a ship
 
-          utilsDOM.setCellDataShipAttribute(cell); // Set data-attribute so it can be recognized as ship
-          utilsDOM.addElementClass(cell, 'gridcell-ship'); // Add 'ship'-class to highlight players ships
-          utilsDOM.setEventListener(player, cell); // Listen for attacks
+          // Set data-attribute so it can be recognized as ship
+          utilsDOM.setCellDataShipAttribute(cell);
+
+          // Add 'ship'-class to highlight players ships
+          utilsDOM.addElementClass(cell, 'gridcell-ship');
 
         } else { // Grid cell is empty
-          utilsDOM.addElementClass(cell, 'gridcell'); // Add default style if cell is empty
-          utilsDOM.setEventListener(player, cell); // Listen for attacks
+
+          // Add default style if cell is empty
+          utilsDOM.addElementClass(cell, 'gridcell');
         }
+
+        // Listen for attacks
+        utilsDOM.setEventListener(player, cell);
 
         // Add cell to the DOM-gameboard
         this._addCellToBoard(cell);

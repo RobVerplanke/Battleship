@@ -31,7 +31,7 @@ function validateOrientation(orientation) {
   }
 }
 
-// Check that gameboard is defined and an instance of the Gameboard class
+// Check if gameboard is defined and an instance of the Gameboard class
 function validateGameBoard(gameBoard) {
   if (gameBoard === undefined) throw new Error('Input is incomplete');
   if (!(gameBoard instanceof Gameboard)) throw new Error('Input is invalid');
@@ -42,12 +42,11 @@ function validatePlayerValue(player) {
   if (player === undefined || typeof player !== 'object') throw new Error('Missing player');
 }
 
-// Compare given coordinate to coordinates that were already attacked
-function validateSentAttacks(axisX, axisY, currentPlayer) {
-  if (currentPlayer.getSentAttacks().find((coordinate) => JSON.stringify(coordinate) === JSON.stringify([axisX, axisY]))) {
+// Compare coordinate with coordinates that were already attacked by player
+function validateSentAttacks(player, axisX, axisY) {
+  if (player.getSentAttacks().find((coordinate) => JSON.stringify(coordinate) === JSON.stringify([axisX, axisY]))) {
     throw new Error('Cell already attacked!');
   }
-  return false;
 }
 
 // Throw error when player is not active

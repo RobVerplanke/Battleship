@@ -1,7 +1,6 @@
 /* global describe, it, expect */
 
 const Gameboard = require('../modules/gameboard.js');
-const Player = require('../modules/player.js');
 const Ship = require('../modules/battleship.js');
 
 beforeEach(() => {
