@@ -87,11 +87,13 @@ main{
 }
 
 .gridcell-missed{
-    z-index: 10;
-    background-color: rgb(193, 193, 193);
+    background-color: rgb(96, 140, 175);
+    font-size: 80px; 
+    color: rgb(40, 40, 40);
+    font-family: helvetica,arial; 
+    line-height: 1;
 }
 
 .gridcell-ship-hit{
-    z-index: 10;
     background-color: rgb(215, 0, 0);
 }

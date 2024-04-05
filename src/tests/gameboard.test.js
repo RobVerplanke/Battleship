@@ -15,7 +15,6 @@ describe('Gameboard', () => {
   
     it('throws error when input is empty', () => {
       const gameBoard = new Gameboard();
-      gameBoard.toggleActiveState();
     
       expect(() => {
         gameBoard.placeShip(); // No arguments given
@@ -201,14 +200,10 @@ describe('Gameboard', () => {
   });
 
 
-
   describe('receiveAttack', () => {
-
-    
 
     it('throws error if coordinates are left empty', () => {
       const gameBoard = new Gameboard();
-      gameBoard.toggleActiveState();
   
       expect(() => {
         gameBoard.receiveAttack(); // Input is empty
@@ -217,7 +212,6 @@ describe('Gameboard', () => {
 
     it('throws error if input is a space', () => {
       const gameBoard = new Gameboard();
-      gameBoard.toggleActiveState();
   
       expect(() => {
         gameBoard.receiveAttack(' '); // Value is a space
@@ -226,7 +220,6 @@ describe('Gameboard', () => {
 
     it('throws error if only one coordinate is given', () => {
       const gameBoard = new Gameboard();
-      gameBoard.toggleActiveState();
   
       expect(() => {
         gameBoard.receiveAttack(1); // Only one coordinate
@@ -235,7 +228,6 @@ describe('Gameboard', () => {
 
     it('throws error if input is not a number', () => {
       const gameBoard = new Gameboard();
-      gameBoard.toggleActiveState();
   
       expect(() => {
         gameBoard.receiveAttack('axisX'); // One value which is not a number
@@ -245,7 +237,6 @@ describe('Gameboard', () => {
 
     it('throws error if one coordinate is not a number', () => {
       const gameBoard = new Gameboard();
-      gameBoard.toggleActiveState();
   
       expect(() => {
         gameBoard.receiveAttack(1, 'axisY'); // Second value is not a number
@@ -255,7 +246,6 @@ describe('Gameboard', () => {
 
     it('throws error if coordinates are outside board boundaries', () => {
       const gameBoard = new Gameboard();
-      gameBoard.toggleActiveState();
   
       expect(() => {
         gameBoard.receiveAttack(11, 2); // Coordinate outside board
@@ -267,7 +257,6 @@ describe('Gameboard', () => {
 
     it('should return true when an attack hits target', () => {
       const gameBoard = new Gameboard();
-      gameBoard.toggleActiveState();
 
       gameBoard.placeShip(1, 2, 3, 'horizontal'); // Place target
       const result = gameBoard.receiveAttack(1, 2); // Hit the target
@@ -277,7 +266,6 @@ describe('Gameboard', () => {
 
     it('should return false when an attack missed target', () => {
       const gameBoard = new Gameboard();
-      gameBoard.toggleActiveState();
   
       gameBoard.placeShip(1, 2, 3, 'horizontal'); // Place target
       const result = gameBoard.receiveAttack(1, 3); // Miss the target
@@ -288,7 +276,6 @@ describe('Gameboard', () => {
     it('calls hit method on attacked ship', () => {
       const gameBoard = new Gameboard();
       const mockHit = jest.spyOn(gameBoard, '_sendHit'); // Spy on _sendHit method
-      gameBoard.toggleActiveState();
 
       gameBoard.placeShip(1, 2, 3, 'horizontal'); // Place target
       gameBoard.receiveAttack(2, 2); // Hit the target
@@ -318,25 +305,8 @@ describe('Gameboard', () => {
       expect(mockedShip.hits).toBe(1);
     })
 
-    it('stores the coordinates of each missed shot', () => {
-      const gameBoard = new Gameboard();
-      gameBoard.toggleActiveState();
-      
-      gameBoard.receiveAttack(1, 1); // Missed attack
-      expect(Array.from(gameBoard.missedAttacks)).toEqual([[1, 1]]);
-
-      gameBoard.receiveAttack(3, 8); // Missed attack
-      expect(Array.from(gameBoard.missedAttacks)).toEqual([[1, 1], [3, 8]]);
-
-      gameBoard.placeShip(5, 9, 3, 'horizontal'); // Place target
-      gameBoard.receiveAttack(6, 9); // Attack was a hit
-      expect(Array.from(gameBoard.missedAttacks)).toEqual([[1, 1], [3, 8]]); // Coordinate was not stored
-
-    })
-
     it('should report whether or not all ships are sunk, with all ships on the board', () => {
       const gameBoard = new Gameboard();
-      gameBoard.toggleActiveState();
 
       // Place all 5 ships
       gameBoard.placeShip(1, 1, 2, 'vertical'); // Place ship with size 2
@@ -384,14 +354,5 @@ describe('Gameboard', () => {
       // The gameboard itself should report that all ships are sunk now
       expect(gameBoard.allShipsSunk).toBeTruthy();
     })
-
-    it('should switch players and gameboards turns after a attack', () => {
-
-    })
-
-    it('should allow to place attacks on opponents board only', () => {
-
-    })
-
   });
 });

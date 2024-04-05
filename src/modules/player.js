@@ -1,19 +1,22 @@
 /* eslint-disable class-methods-use-this */
+
 const validateInput = require('./utils/validateInput.js');
 const utils = require('./utils/utils.js');
+// const gameControl = require('../index.js');
 
 const BOARD_SIZE = 10;
 
 class Player {
-  constructor(name = 'Player') {
+  constructor(gameControl, name = 'Player') {
     this.name = name; // Players name becomes 'Player' if no name was given
+    this.gameControl = gameControl; // Set the current game controller
     this.active = false; // Determines this player is active
     this.sentAttacks = []; // Store coordinates of all previous attacks
     this.isHuman = true; // A player can be human or computer
   }
 
   // Get coordinates of all the placed attacks in this round
-  _getSentAttacks() {
+  getSentAttacks() {
     return this.sentAttacks;
   }
 
@@ -22,14 +25,8 @@ class Player {
     this.sentAttacks.push([axisX, axisY]);
   }
 
-  // Switch role and play as computer from now on
-  setPlayerAsComputer() {
-    this.isHuman = false;
-    this.name = 'Computer';
-  }
-
   // Check if it's players turn to play
-  _getActiveState() {
+  isActive() {
     return this.active;
   }
 
@@ -40,7 +37,7 @@ class Player {
 
   // Compare coordinate with coordinates that were already attacked
   _validateSentAttacks(axisX, axisY) {
-    if (this._getSentAttacks().find((coordinate) => JSON.stringify(coordinate) === JSON.stringify([axisX, axisY]))) {
+    if (this.getSentAttacks().find((coordinate) => JSON.stringify(coordinate) === JSON.stringify([axisX, axisY]))) {
       throw new Error('Cell already attacked!');
     }
   }
@@ -48,15 +45,14 @@ class Player {
   // Generate a random valid coordinate to attack
   generateRandomCoordinate() {
     const newCoordinate = [];
-    let axisX = null;
-    let axisY = null;
+    let axisX = 0;
+    let axisY = 0;
 
     // Keep generating a coordinate until it's valid
-    axisX = utils.getRandomInt(BOARD_SIZE);
-    axisY = utils.getRandomInt(BOARD_SIZE);
-
-    // Prevent that a grid cell is attacked more than once
-    this._validateSentAttacks(axisX, axisY);
+    while (this._validateSentAttacks(axisX, axisY) === false) {
+      axisX = utils.getRandomInt(BOARD_SIZE);
+      axisY = utils.getRandomInt(BOARD_SIZE);
+    }
 
     // Add valid coordinate to list
     newCoordinate.push(axisX, axisY);
@@ -65,26 +61,18 @@ class Player {
   }
 
   // Send a attack to a specific grid cell
-  sendAttack(axisX, axisY) {
-
-    // Only allowed to play when it's players turn
-    if (!this._getActiveState()) throw new Error('It\'s not your turn!');
+  sendAttack(axisX, axisY, cell) {
 
     // Check if values are valid coordinates on the board
-    validateInput.validateCoordinates(axisX, axisY, BOARD_SIZE);
-
-    // Prevent that a grid cell is attacked more than once
-    this._validateSentAttacks(axisX, axisY);
+    validateInput.validateCoordinates(axisX, axisY);
 
     // Send attack to opponents gameboard
+    this.gameControl.receiveAttackRequest(axisX, axisY, this, cell);
 
     // Store attacked coordinates
     this._setSentAttacks(axisX, axisY);
 
-    // Switch players turns
-    this.toggleActiveState();
-
-    return true;
+    return false;
   }
 }
 

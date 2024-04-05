@@ -37,16 +37,21 @@ function validateGameBoard(gameBoard) {
 }
 
 // Check if playernames are defined and are objects
-function validatePlayers(playerOne, playerTwo) {
-  if (playerOne === undefined || typeof playerOne !== 'object'
-    || playerTwo === undefined || typeof playerTwo !== 'object') {
-    throw new Error('Missing player');
-  }
+function validatePlayerValue(player) {
+  if (player === undefined || typeof player !== 'object') throw new Error('Missing player');
 }
 
-function validateActivePlayer(activePlayer) {
-  console.log('Not your turn!');
-  if (!activePlayer.active) throw new Error('Not your turn!');
+// Compare coordinate with coordinates that were already attacked
+function validateSentAttacks(axisX, axisY, currentPlayer) {
+  if (currentPlayer.getSentAttacks().find((coordinate) => JSON.stringify(coordinate) === JSON.stringify([axisX, axisY]))) {
+    throw new Error('Cell already attacked!');
+  }
+  return false;
+}
+
+// Throw error when player is not active
+function validatePlayerActiveState(player) {
+  if (!player.isActive()) throw new Error('It\'s not your turn!');
 }
 
 module.exports = {
@@ -54,6 +59,7 @@ module.exports = {
   validateOrientation,
   validateShipSize,
   validateGameBoard,
-  validatePlayers,
-  validateActivePlayer,
+  validatePlayerValue,
+  validateSentAttacks,
+  validatePlayerActiveState,
 };

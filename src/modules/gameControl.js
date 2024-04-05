@@ -1,32 +1,95 @@
-const Gameboard = require('./gameboard.js');
-const Player = require('./player.js');
-const GameboardDOM = require('../componentsDOM/gameboardDOM.js');
+/* eslint-disable class-methods-use-this */
+const validateInput = require('./utils/validateInput.js');
+const utils = require('./utils/utils.js');
+const utilsDOM = require('../componentsDOM/utilsDOM.js');
 
-class GameControl {
-  constructor() {
-    this.playerOne = new Player('Player one'); // Players
-    this.playerTwo = new Player('Player two');
 
-    this.gameboardOne = new Gameboard(this.playerTwo); // Main gameboards with corresponding opponent
-    this.gameboardTwo = new Gameboard(this.playerOne);
+class GameController {
+  constructor(
+    playerOne = {}, // Properties are empty if arguments are left empty
+    playerTwo = {},
+    gameBoardOne = {},
+    gameBoardTwo = {},
+    gameboardDOMOne = {},
+    gameboardDOMTwo = {},
+  ) {
 
-    this.gameboardDOMOne = new GameboardDOM('#player-one-gameboard', this.playerTwo); // Gameboards in the DOM
-    this.gameboardDOMTwo = new GameboardDOM('#player-two-gameboard', this.playerOne);
+    // Create a new set of players
+    this.playerOne = playerOne;
+    this.playerTwo = playerTwo;
+
+    // Create new main gameboards with its corresponding opponent
+    this.gameboardOne = gameBoardOne;
+    this.gameboardTwo = gameBoardTwo;
+
+    // Create new gameboards in the DOM
+    this.gameboardDOMOne = gameboardDOMOne;
+    this.gameboardDOMTwo = gameboardDOMTwo;
   }
 
-  activateGameboard(gameboard) {
-    gameboard.toggleActiveState();
+  _togglePlayersActiveStates() {
+    this.playerOne.active = !this.playerOne.active;
+    this.playerTwo.active = !this.playerTwo.active;
   }
 
-  activatePlayer(player) {
-    player.toggleActiveState();
+  _getOpponentGameboard(currentPlayer) {
+    if (currentPlayer === this.playerOne) return this.gameboardTwo;
+    if (currentPlayer === this.playerTwo) return this.gameboardOne;
+    return false;
   }
 
-  // switch players
+  receiveAttackRequest(axisX, axisY, curentPlayer, cell) {
 
-  // toggle active gameboard
+    // Check if current player is actve
+    validateInput.validatePlayerActiveState(curentPlayer);
 
+    // Validate coordinate values
+    validateInput.validateCoordinates(axisX, axisY);
+
+    // Check if player has not already attacked this cell
+    validateInput.validateSentAttacks(axisX, axisY, curentPlayer);
+
+    // Send validated data to perform the attack
+    this._performAttack(axisX, axisY, this._getOpponentGameboard(curentPlayer), cell);
+  }
+
+  // Send hit message to corresponding gameboard
+  _performAttack(axisX, axisY, targetGameboard, cell) {
+
+    // Send attack to corresponding gameboard
+    targetGameboard.receiveAttack(axisX, axisY);
+
+    // Visually hihglight attacked cell when it contains a ship
+    if (cell.getAttribute('data-hasShip')) {
+      utilsDOM.addElementClass(cell, 'gridcell-ship-hit');
+    } else { // Visually disable attacked cell when it's empty
+      utilsDOM.setElementContent(cell);
+      utilsDOM.addElementClass(cell, 'gridcell-missed');
+    }
+
+    // Check if all ships sunk on one of the boards
+    utils.isGameOver(this.gameboardOne, this.gameboardTwo);
+
+    // Switch players turns
+    this._togglePlayersActiveStates();
+  }
+
+  // Initialize the game
+  startGame(
+    playerOne,
+    playerTwo,
+    gameboardOne,
+    gameboardTwo,
+    gameboardDOMOne,
+    gameboardDOMTwo,
+  ) {
+    this.playerOne = playerOne;
+    this.playerTwo = playerTwo;
+    this.gameboardOne = gameboardOne;
+    this.gameboardTwo = gameboardTwo;
+    this.gameboardDOMOne = gameboardDOMOne;
+    this.gameboardDOMTwo = gameboardDOMTwo;
+  }
 }
 
-
-module.exports = GameControl;
+module.exports = GameController;
