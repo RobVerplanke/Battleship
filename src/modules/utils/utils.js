@@ -24,7 +24,9 @@ function validateCellValue(allSunkenShipsList, cellValue) {
 
 // Reports when all ships on one of the boards are sunken
 function isGameOver(gameboardOne, gameboardTwo) {
-  return gameboardOne.getAllShipsSunkState() || gameboardTwo.getAllShipsSunkState();
+  if (gameboardOne.getAllShipsSunkState() || gameboardTwo.getAllShipsSunkState()) {
+    throw new Error('Game over!');
+  }
 }
 
 module.exports = {

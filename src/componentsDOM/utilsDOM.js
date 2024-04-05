@@ -19,20 +19,18 @@ function addElementClass(element, className) {
   element.classList.add(className); // Add class of the corresponding element
 }
 
+function setElementContent(cell) {
+  const currentCell = cell;
+  currentCell.innerHTML = '&times';
+}
+
 // Listen for attacks on the cell and add corresponding style classes
 function setEventListener(currentPlayer, cell) {
   cell.addEventListener('click', () => {
     const coordinates = cell.getAttribute('data-coordinate');
-    const cellHasShip = cell.getAttribute('data-hasShip');
 
-    // Hihglight attacked cell when it contains a ship
-    if (cellHasShip) addElementClass(cell, 'gridcell-ship-hit');
-
-    // Visually disable attacked cell when it's empty
-    if (!cellHasShip) addElementClass(cell, 'gridcell-missed');
-
-    // Send a attack
-    currentPlayer.sendAttack(Number(coordinates[0]), Number(coordinates[2]));
+    // Send attack request from active player to game control
+    currentPlayer.sendAttack(Number(coordinates[0]), Number(coordinates[2]), cell);
   });
 }
 
@@ -41,5 +39,6 @@ module.exports = {
   setCellDataCoordinateAttribute,
   setCellDataShipAttribute,
   addElementClass,
+  setElementContent,
   setEventListener,
 };
