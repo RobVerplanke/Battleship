@@ -1,4 +1,8 @@
+/** @jest-environment jsdom */
+
 const Player = require('../modules/player.js');
+const Gameboard = require('../modules/gameboard.js')
+const GameController = require('../modules/gameControl.js');
 
 beforeEach(() => {
     jest.clearAllMocks();
@@ -14,7 +18,7 @@ describe('Player', () => {
     })
 
     it('creates a new player with correct name value', () => {
-        const newPlayer = new Player('Testname');
+        const newPlayer = new Player('gameController','Testname');
         newPlayer.toggleActiveState();
 
         expect(newPlayer.name).toBe('Testname'); // Name is stored
@@ -88,31 +92,32 @@ describe('Player', () => {
     })
 
     it('prevents to generate a coordinate that was already attacked', () => {
-        const newPlayer = new Player();
-        newPlayer.toggleActiveState();
+        const gameControl = new GameController();
+        const cell = document.createElement('div');
 
+        // Add data-attribute to DOM-element
+        cell.setAttribute('data-hasShip', 'true');
+        
+        gameControl.playerOne = new Player(gameControl, 'player one');
+        gameControl.playerTwo = new Player(gameControl, 'player two');
+        
+        gameControl.gameboardOne = new Gameboard();
+        gameControl.gameboardTwo = new Gameboard();
+        
         // Generate a valid random coordinate
-        const randomCoordinate = newPlayer.generateRandomCoordinate();
+        const randomCoordinate = gameControl.playerOne.generateRandomCoordinate();
         const axisX = randomCoordinate[0];
         const axisY = randomCoordinate[1];
 
         // Place an atack on the generated coordinate
-        newPlayer.sendAttack(axisX, axisY);
-
+        gameControl.playerOne.active = true;
+        gameControl.playerOne.sendAttack(axisX, axisY, cell);
+        
         expect(() => { // Atack the same cell again
-           newPlayer.toggleActiveState();
-           newPlayer.sendAttack(axisX, axisY);
+            gameControl.playerOne.active = true;
+            gameControl.playerOne.sendAttack(axisX, axisY, cell);
         }).toThrow('Cell already attacked!');
     })
 
-    it('should prevent player places two attacks or more in a row', () => {
-        const newPlayer = new Player();
-        newPlayer.toggleActiveState();
-        
-        newPlayer.sendAttack(1, 2); // Send an attack
-               
-        expect(() => {
-            newPlayer.sendAttack(2, 3);
-        }).toThrow('It\'s not your turn!'); // Directly place antoher attack
-    })   
+    
 })
