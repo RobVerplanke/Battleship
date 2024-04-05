@@ -61,8 +61,8 @@ describe('Game controller', () => {
         const newGameControl = new GameController();
 
         // Initial active states must be false
-        newGameControl.gameboardOne = new Gameboard('gameboardOne');
-        newGameControl.gameboardTwo = new Gameboard('gameboardTwo');
+        newGameControl.gameboardOne = new Gameboard();
+        newGameControl.gameboardTwo = new Gameboard();
 
         // Initial active states must be false
         expect(newGameControl.gameboardOne.active).toBeFalsy();
@@ -84,8 +84,8 @@ describe('Game controller', () => {
         jest.mock('../modules/gameboard.js');
 
         // Create new mock gameboards in the controller
-        newGameControl.gameboardOne = new Gameboard('gameboardOne');
-        newGameControl.gameboardTwo = new Gameboard('gameboardTwo');
+        newGameControl.gameboardOne = new Gameboard();
+        newGameControl.gameboardTwo = new Gameboard();
 
         // Spy on receiveAttack method
         const mockReceiveAttackOne = jest.spyOn(newGameControl.gameboardOne, 'receiveAttack');
@@ -117,8 +117,8 @@ describe('Game controller', () => {
         jest.mock('../modules/gameboard.js');
 
         // Create new mock gameboards in the controller
-        newGameControl.gameboardOne = new Gameboard('gameboardOne');
-        newGameControl.gameboardTwo = new Gameboard('gameboardTwo');
+        newGameControl.gameboardOne = new Gameboard();
+        newGameControl.gameboardTwo = new Gameboard();
 
         // Spy on receiveAttack method
         const mockReceiveAttackOne = jest.spyOn(newGameControl.gameboardOne, 'receiveAttack');
@@ -147,8 +147,8 @@ describe('Game controller', () => {
         newGameControl.playerTwo = new Player(newGameControl, 'Player two');
 
         // Create new gameboards in the controller
-        newGameControl.gameboardOne = new Gameboard('gameboardOne');
-        newGameControl.gameboardTwo = new Gameboard('gameboardTwo');
+        newGameControl.gameboardOne = new Gameboard();
+        newGameControl.gameboardTwo = new Gameboard();
 
         const axisX = 1;
         const axisY = 2;
@@ -172,8 +172,8 @@ describe('Game controller', () => {
         newGameControl.playerOne = new Player(newGameControl, 'Player one');
 
         // Create new gameboards in the controller
-        newGameControl.gameboardOne = new Gameboard('gameboardOne');
-        newGameControl.gameboardTwo = new Gameboard('gameboardTwo');
+        newGameControl.gameboardOne = new Gameboard();
+        newGameControl.gameboardTwo = new Gameboard();
 
         const axisX = 1;
         const axisY = 2;
@@ -201,8 +201,8 @@ describe('Game controller', () => {
         newGameControl.playerTwo = new Player(newGameControl, 'Player two');
 
         // Create new gameboards in the controller
-        newGameControl.gameboardOne = new Gameboard('gameboardOne');
-        newGameControl.gameboardTwo = new Gameboard('gameboardTwo');
+        newGameControl.gameboardOne = new Gameboard();
+        newGameControl.gameboardTwo = new Gameboard();
 
         const axisX = 1;
         const axisY = 2;

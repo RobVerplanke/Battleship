@@ -18,7 +18,7 @@ class GameController {
     this.playerOne = playerOne;
     this.playerTwo = playerTwo;
 
-    // Create new main gameboards with its corresponding opponent
+    // Create new main gameboards
     this.gameboardOne = gameBoardOne;
     this.gameboardTwo = gameBoardTwo;
 
@@ -27,17 +27,20 @@ class GameController {
     this.gameboardDOMTwo = gameboardDOMTwo;
   }
 
+  // Stiwch players turns
   _togglePlayersActiveStates() {
     this.playerOne.active = !this.playerOne.active;
     this.playerTwo.active = !this.playerTwo.active;
   }
 
+  // Returns the opponents gameboard
   _getOpponentGameboard(currentPlayer) {
     if (currentPlayer === this.playerOne) return this.gameboardTwo;
     if (currentPlayer === this.playerTwo) return this.gameboardOne;
     return false;
   }
 
+  // Handle incoming attack
   receiveAttackRequest(axisX, axisY, curentPlayer, cell) {
 
     // Check if current player is actve
@@ -46,7 +49,7 @@ class GameController {
     // Validate coordinate values
     validateInput.validateCoordinates(axisX, axisY);
 
-    // Check if player has not already attacked this cell
+    // Check if cell is not already attacked
     validateInput.validateSentAttacks(axisX, axisY, curentPlayer);
 
     // Send validated data to perform the attack
@@ -63,11 +66,11 @@ class GameController {
     if (cell.getAttribute('data-hasShip')) {
       utilsDOM.addElementClass(cell, 'gridcell-ship-hit');
     } else { // Visually disable attacked cell when it's empty
-      utilsDOM.setElementContent(cell);
+      utilsDOM.setMissedCellContent(cell);
       utilsDOM.addElementClass(cell, 'gridcell-missed');
     }
 
-    // Check if all ships sunk on one of the boards
+    // Check if all ships sunk on one of the gameboards
     utils.isGameOver(this.gameboardOne, this.gameboardTwo);
 
     // Switch players turns

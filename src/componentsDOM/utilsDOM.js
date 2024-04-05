@@ -1,32 +1,34 @@
-// const Ship = require('../modules/battleship.js');
-
 // Create new cell
 function createNewElement(element) {
-  return document.createElement(element); // Create a new cell
+  return document.createElement(element);
 }
 
 // Set coordinates as data-attribute value
 function setCellDataCoordinateAttribute(cell, axisX, axisY) {
-  cell.setAttribute('data-coordinate', [axisY, axisX - 1]); // Attach coordinates
+  cell.setAttribute('data-coordinate', [axisY, axisX - 1]);
 }
 
+// Set data-attribute on cells that contain a ship
 function setCellDataShipAttribute(cell) {
-  cell.setAttribute('data-hasShip', true); // Set state
+  cell.setAttribute('data-hasShip', true);
 }
 
-// Add a different class if cell contains a ship
+// Add a class to the give element
 function addElementClass(element, className) {
-  element.classList.add(className); // Add class of the corresponding element
+  element.classList.add(className);
 }
 
-function setElementContent(cell) {
+// Set the value of an attacked cell that was empty to a cross
+function setMissedCellContent(cell) {
   const currentCell = cell;
   currentCell.innerHTML = '&times';
 }
 
-// Listen for attacks on the cell and add corresponding style classes
+// Listen for attacks on the cell
 function setEventListener(currentPlayer, cell) {
   cell.addEventListener('click', () => {
+
+    // Get the corresponing coordinates
     const coordinates = cell.getAttribute('data-coordinate');
 
     // Send attack request from active player to game control
@@ -39,6 +41,6 @@ module.exports = {
   setCellDataCoordinateAttribute,
   setCellDataShipAttribute,
   addElementClass,
-  setElementContent,
+  setMissedCellContent,
   setEventListener,
 };

@@ -2,7 +2,6 @@
 
 const validateInput = require('./utils/validateInput.js');
 const utils = require('./utils/utils.js');
-// const gameControl = require('../index.js');
 
 const BOARD_SIZE = 10;
 
@@ -15,7 +14,7 @@ class Player {
     this.isHuman = true; // A player can be human or computer
   }
 
-  // Get coordinates of all the placed attacks in this round
+  // Get coordinates of all the placed attacks
   getSentAttacks() {
     return this.sentAttacks;
   }
@@ -60,13 +59,13 @@ class Player {
     return newCoordinate;
   }
 
-  // Send a attack to a specific grid cell
+  // Send an attack to a specific grid cell
   sendAttack(axisX, axisY, cell) {
 
     // Check if values are valid coordinates on the board
     validateInput.validateCoordinates(axisX, axisY);
 
-    // Send attack to opponents gameboard
+    // Send attack to the game controller
     this.gameControl.receiveAttackRequest(axisX, axisY, this, cell);
 
     // Store attacked coordinates

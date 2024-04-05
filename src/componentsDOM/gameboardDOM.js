@@ -14,6 +14,7 @@ class GameboardDOM {
     return this.element;
   }
 
+  // Return the board size
   _getBoardSize() {
     return this.boardSize;
   }
@@ -31,7 +32,8 @@ class GameboardDOM {
       for (let j = 0; j < this._getBoardSize(); j++) {
         const cell = utilsDOM.createNewElement('div'); // Create a new cell in the DOM for each grid cell
 
-        utilsDOM.setCellDataCoordinateAttribute(cell, i, j); // Set coordinates as data-attribute value
+        // Set coordinates as data-attribute value
+        utilsDOM.setCellDataCoordinateAttribute(cell, i, j);
 
         // Validate the cell grid value at the current coordinates
         if (gameboard.getGrid()[j][i - 1] instanceof Ship) { // Grid cell contains a ship
@@ -41,7 +43,7 @@ class GameboardDOM {
           utilsDOM.setEventListener(player, cell); // Listen for attacks
 
         } else { // Grid cell is empty
-          utilsDOM.addElementClass(cell, 'gridcell'); // Add default style
+          utilsDOM.addElementClass(cell, 'gridcell'); // Add default style if cell is empty
           utilsDOM.setEventListener(player, cell); // Listen for attacks
         }
 
