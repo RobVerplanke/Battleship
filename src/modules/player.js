@@ -12,22 +12,22 @@ class Player {
     this.isHuman = true; // A player can be human or computer
   }
 
-  // Get coordinates of all the placed attacks
+  // Used to dertermine if a cell is already been attacked
   getSentAttacks() {
     return this.sentAttacks;
   }
 
-  // Store attacked coordinates
+  // Keep track of every attacked coordinate
   _setSentAttacks(axisX, axisY) {
     this.sentAttacks.push([axisX, axisY]);
   }
 
-  // Check if it's players turn to play
+  // Used by game control to validate if it's players turn to play
   isActive() {
     return this.active;
   }
 
-  // Switch turns between players
+  // Switch turns between players after each valid attack
   toggleActiveState() {
     this.active = !this.active;
   }

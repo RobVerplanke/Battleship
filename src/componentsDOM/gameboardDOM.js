@@ -9,17 +9,21 @@ class GameboardDOM {
     this.boardSize = BOARD_SIZE; // Width and height
   }
 
-  // Return the board element
+  clearGameboard() {
+    this.element.innerHTML = '';
+  }
+
+  // Called when a new cell has to be added to the gameboard
   _getBoard() {
     return this.element;
   }
 
-  // Return the board size
+  // Used to set the max boundaries of a gameboard when building it
   _getBoardSize() {
     return this.boardSize;
   }
 
-  // Add cell elements to the gameboard element
+  // Add a cell element to the gameboard element
   _addCellToBoard(cell) {
     this._getBoard().append(cell);
   }

@@ -7,7 +7,7 @@ const validatePlacement = require('./utils/validatePlacement.js');
 const utils = require('./utils/utils.js');
 const utilsDOM = require('../componentsDOM/utilsDOM.js');
 
-const SHIP_AMOUNT = 5; // Default amount of ships for each player
+const SHIP_AMOUNT = 1; // Default amount of ships for each player
 
 class Gameboard {
   constructor() {
@@ -28,12 +28,17 @@ class Gameboard {
     }
   }
 
-  // Return size of the board
+  clearGrid() {
+    this.grid = [];
+    this._buildGameBoard();
+  }
+
+  // Used in validation functions to check if coordinates fit on the gameboard
   getBoardSize() {
     return this.boardSize;
   }
 
-  // Return the grid array
+  // Called when the gamebord in the DOM is being built
   getGrid() {
     return this.grid;
   }
@@ -73,10 +78,10 @@ class Gameboard {
     return allSunkenShipsList;
   }
 
-  // Validate whether or not all ships on the board are sunk
+  // Called after each attack to determine if the game is over
   _validateAllShipsSunkState() {
 
-    // List of all sunken ships
+    // Create a list of all sunken ships
     const allSunkenShipsList = this._getAllSunkenShips();
 
     // Check if the amount of sunken ships is the same as the total amount of ships

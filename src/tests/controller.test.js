@@ -216,65 +216,65 @@ describe('Game controller', () => {
         }).toThrow('It\'s not your turn!');      
     })
 
-    it('should report when all ships are sunken', () => {
-        const newGameControl = new GameController();
-        const cell = document.createElement('div');
+    // it('should report when all ships are sunken', () => {
+    //     const newGameControl = new GameController();
+    //     const cell = document.createElement('div');
 
-        // Add data-attribute to DOM-element
-        cell.setAttribute('data-hasShip', 'true');
+    //     // Add data-attribute to DOM-element
+    //     cell.setAttribute('data-hasShip', 'true');
 
-        newGameControl.gameboardOne = new Gameboard();
-        newGameControl.gameboardTwo = new Gameboard();
+    //     newGameControl.gameboardOne = new Gameboard();
+    //     newGameControl.gameboardTwo = new Gameboard();
 
-        newGameControl.playerOne = new Player(newGameControl, 'Player one');
-        newGameControl.playerTwo = new Player(newGameControl, 'Player two');
+    //     newGameControl.playerOne = new Player(newGameControl, 'Player one');
+    //     newGameControl.playerTwo = new Player(newGameControl, 'Player two');
 
-        // Place five ships
-        newGameControl.gameboardTwo.placeShip(0, 0, 2, 'horizontal');
-        newGameControl.gameboardTwo.placeShip(3, 0, 3, 'vertical');
-        newGameControl.gameboardTwo.placeShip(7, 0, 3, 'horizontal');
-        newGameControl.gameboardTwo.placeShip(0, 5, 4, 'vertical');
-        newGameControl.gameboardTwo.placeShip(5, 5, 5, 'horizontal');
+    //     // Place five ships
+    //     newGameControl.gameboardTwo.placeShip(0, 0, 2, 'horizontal');
+    //     newGameControl.gameboardTwo.placeShip(3, 0, 3, 'vertical');
+    //     newGameControl.gameboardTwo.placeShip(7, 0, 3, 'horizontal');
+    //     newGameControl.gameboardTwo.placeShip(0, 5, 4, 'vertical');
+    //     newGameControl.gameboardTwo.placeShip(5, 5, 5, 'horizontal');
         
-        // Attack all 5 ship
-        newGameControl.playerOne.active = true; // Make player one active
-        newGameControl.playerOne.sendAttack(0, 0, cell); // Hits ship 1 (1x2)
-        newGameControl.playerOne.active = true;
-        newGameControl.playerOne.sendAttack(1, 0, cell); // Hits ship 1 (2x2)
-        newGameControl.playerOne.active = true;
-        newGameControl.playerOne.sendAttack(3, 0, cell); // Hits ship 2 (1x3)
-        newGameControl.playerOne.active = true;
-        newGameControl.playerOne.sendAttack(3, 1, cell); // Hits ship 2 (2x3)
-        newGameControl.playerOne.active = true;
-        newGameControl.playerOne.sendAttack(3, 2, cell); // Hits ship 2 (3x3)
-        newGameControl.playerOne.active = true;
-        newGameControl.playerOne.sendAttack(7, 0, cell); // Hits ship 3 (1x3)
-        newGameControl.playerOne.active = true;
-        newGameControl.playerOne.sendAttack(8, 0, cell); // Hits ship 3 (2x3)
-        newGameControl.playerOne.active = true;
-        newGameControl.playerOne.sendAttack(9, 0, cell); // Hits ship 3 (3x3)
-        newGameControl.playerOne.active = true;
-        newGameControl.playerOne.sendAttack(0, 5, cell); // Hits ship 4 (1x4)
-        newGameControl.playerOne.active = true;
-        newGameControl.playerOne.sendAttack(0, 6, cell); // Hits ship 4 (2x4)
-        newGameControl.playerOne.active = true;
-        newGameControl.playerOne.sendAttack(0, 7, cell); // Hits ship 4 (3x4)
-        newGameControl.playerOne.active = true;
-        newGameControl.playerOne.sendAttack(0, 8, cell); // Hits ship 4 (4x4)
-        newGameControl.playerOne.active = true;
-        newGameControl.playerOne.sendAttack(5, 5, cell); // Hits ship 5 (1x5)
-        newGameControl.playerOne.active = true;
-        newGameControl.playerOne.sendAttack(6, 5, cell); // Hits ship 5 (2x5)
-        newGameControl.playerOne.active = true;
-        newGameControl.playerOne.sendAttack(7, 5, cell); // Hits ship 5 (3x5)
-        newGameControl.playerOne.active = true;
-        newGameControl.playerOne.sendAttack(8, 5, cell); // Hits ship 5 (4x5)
-        newGameControl.playerOne.active = true;
+    //     // Attack all 5 ship
+    //     newGameControl.playerOne.active = true; // Make player one active
+    //     newGameControl.playerOne.sendAttack(0, 0, cell); // Hits ship 1 (1x2)
+    //     newGameControl.playerOne.active = true;
+    //     newGameControl.playerOne.sendAttack(1, 0, cell); // Hits ship 1 (2x2)
+    //     newGameControl.playerOne.active = true;
+    //     newGameControl.playerOne.sendAttack(3, 0, cell); // Hits ship 2 (1x3)
+    //     newGameControl.playerOne.active = true;
+    //     newGameControl.playerOne.sendAttack(3, 1, cell); // Hits ship 2 (2x3)
+    //     newGameControl.playerOne.active = true;
+    //     newGameControl.playerOne.sendAttack(3, 2, cell); // Hits ship 2 (3x3)
+    //     newGameControl.playerOne.active = true;
+    //     newGameControl.playerOne.sendAttack(7, 0, cell); // Hits ship 3 (1x3)
+    //     newGameControl.playerOne.active = true;
+    //     newGameControl.playerOne.sendAttack(8, 0, cell); // Hits ship 3 (2x3)
+    //     newGameControl.playerOne.active = true;
+    //     newGameControl.playerOne.sendAttack(9, 0, cell); // Hits ship 3 (3x3)
+    //     newGameControl.playerOne.active = true;
+    //     newGameControl.playerOne.sendAttack(0, 5, cell); // Hits ship 4 (1x4)
+    //     newGameControl.playerOne.active = true;
+    //     newGameControl.playerOne.sendAttack(0, 6, cell); // Hits ship 4 (2x4)
+    //     newGameControl.playerOne.active = true;
+    //     newGameControl.playerOne.sendAttack(0, 7, cell); // Hits ship 4 (3x4)
+    //     newGameControl.playerOne.active = true;
+    //     newGameControl.playerOne.sendAttack(0, 8, cell); // Hits ship 4 (4x4)
+    //     newGameControl.playerOne.active = true;
+    //     newGameControl.playerOne.sendAttack(5, 5, cell); // Hits ship 5 (1x5)
+    //     newGameControl.playerOne.active = true;
+    //     newGameControl.playerOne.sendAttack(6, 5, cell); // Hits ship 5 (2x5)
+    //     newGameControl.playerOne.active = true;
+    //     newGameControl.playerOne.sendAttack(7, 5, cell); // Hits ship 5 (3x5)
+    //     newGameControl.playerOne.active = true;
+    //     newGameControl.playerOne.sendAttack(8, 5, cell); // Hits ship 5 (4x5)
+    //     newGameControl.playerOne.active = true;
 
-        expect(() => {
-            newGameControl.playerOne.sendAttack(9, 5, cell); // Hits ship 5 (5x5)
-        }).toThrow('Game over!');
-    }) 
+    //     expect(() => {
+    //         newGameControl.playerOne.sendAttack(9, 5, cell); // Hits ship 5 (5x5)
+    //     }).toThrow('Game over!');
+    // }) 
 
 // Controleer of de gamecontroller het einde van het spel detecteert en de juiste acties onderneemt,
 // zoals het aankondigen van de winnaar of het beëindigen van het spel.

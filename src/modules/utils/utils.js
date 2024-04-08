@@ -11,10 +11,9 @@ function getRandomInt(boardSize) {
 }
 
 // Reports when all ships on one of the boards are sunken
-function isGameOver(gameboardOne, gameboardTwo) {
-  if (gameboardOne.getAllShipsSunkState() || gameboardTwo.getAllShipsSunkState()) {
-    throw new Error('Game over!');
-  }
+function isGameOver(gameboard) {
+  if (gameboard.getAllShipsSunkState()) return true;
+  return false;
 }
 
 module.exports = {
