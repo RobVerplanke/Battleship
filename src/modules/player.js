@@ -2,6 +2,7 @@
 
 const validateInput = require('./utils/validateInput.js');
 const utils = require('./utils/utils.js');
+const utilsDOM = require('../componentsDOM/utilsDOM.js');
 
 class Player {
   constructor(gameControl, name = 'Player') {
@@ -33,10 +34,10 @@ class Player {
   }
 
   // Generate a random valid coordinate to attack
-  generateRandomCoordinate() {
+  generateRandomAttack() {
     const newCoordinate = [];
-    let axisX = 0;
-    let axisY = 0;
+    let axisX = utils.getRandomInt(this.gameControl.getBoardSize());
+    let axisY = utils.getRandomInt(this.gameControl.getBoardSize());
 
     // Keep generating a coordinate until it is valid
     while (validateInput.validateSentAttacks(this, axisX, axisY) === false) {
@@ -47,7 +48,18 @@ class Player {
     // Add valid coordinate to list
     newCoordinate.push(axisX, axisY);
 
-    return newCoordinate;
+    this.sendRandomAttack(axisX, axisY);
+  }
+
+  // If player two is the computer, generate and place a valid attack on a cell
+  sendRandomAttack(axisX, axisY) {
+    const opponentGameboard = this.gameControl.getOpponentGameboardDOM(this);
+    const cell = utilsDOM.getCellByCoordinate(axisX, axisY, opponentGameboard);
+
+    // setTimeout(() => {
+    this.sendAttack(axisX, axisY, cell);
+    // }, 1000);
+
   }
 
   // Send a attack to a specific grid cell

@@ -45,8 +45,9 @@ function validatePlayerValue(player) {
 // Compare coordinate with coordinates that were already attacked by player
 function validateSentAttacks(player, axisX, axisY) {
   if (player.getSentAttacks().find((coordinate) => JSON.stringify(coordinate) === JSON.stringify([axisX, axisY]))) {
-    throw new Error('Cell already attacked!');
+    return false;
   }
+  return true;
 }
 
 // Throw error when player is not active

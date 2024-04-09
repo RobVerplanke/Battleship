@@ -15,6 +15,13 @@ function setCellDataShipAttribute(cell) {
   cell.setAttribute('data-hasShip', true);
 }
 
+function getCellByCoordinate(axisX, axisY, gameboardDOM) {
+  const gameboardElement = gameboardDOM.getBoard();
+  const cell = gameboardElement.querySelector(`[data-coordinate="${[axisY, axisX]}"]`);
+
+  return cell;
+}
+
 // Used to add a corresponding class to the cell that was attacked
 function addElementClass(element, className) {
   element.classList.add(className);
@@ -47,7 +54,7 @@ function resetActiveNameClass() {
 
 }
 
-function togglePlayerActiveColors() {
+function togglePlayersActiveColors() {
   const nameHolderPlayerOne = document.querySelector('#player-one-name');
   const nameHolderPlayerTwo = document.querySelector('#player-two-name');
 
@@ -154,10 +161,11 @@ module.exports = {
   createNewElement,
   setCellDataCoordinateAttribute,
   setCellDataShipAttribute,
+  getCellByCoordinate,
   addElementClass,
   updatePlayerNames,
   resetActiveNameClass,
-  togglePlayerActiveColors,
+  togglePlayersActiveColors,
   addCellClass,
   setMissedCellContent,
   validateCellValue,

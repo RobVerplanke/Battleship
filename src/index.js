@@ -48,9 +48,11 @@ gameboardDOMTwo.generateGridCells(gameboardTwo, playerOne);
 
 */
 
+// Set player two as computer opponent
+playerTwo.isHuman = false;
+
 // Player one begins
 playerOne.active = true;
-playerTwo.active = false;
 
 // Start the game
 gameControl.startGame(

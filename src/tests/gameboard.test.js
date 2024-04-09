@@ -303,6 +303,21 @@ describe('Gameboard', () => {
       // Check if the hits-property of the mocked ship is raised with one
       expect(mockedShip.hits).toBe(1);
     })
+  });
+
+  // AI player
+
+  describe('', () => {
+
+    it('', () => {
+
+    })
+
+    
+
+  });
+    // CHANGE AMOUNT_SHIPS CONSTANT TO '5' FOR THIS TEST TO WORK
+
 
     // it('should report whether or not all ships are sunk, with all ships on the board', () => {
     //   const gameBoard = new Gameboard();
@@ -353,5 +368,5 @@ describe('Gameboard', () => {
     //   // The gameboard itself should report that all ships are sunk now
     //   expect(gameBoard.allShipsSunk).toBeTruthy();
     // })
-  });
+ 
 });

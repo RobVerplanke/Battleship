@@ -14,7 +14,7 @@ class GameboardDOM {
   }
 
   // Called when a new cell has to be added to the gameboard
-  _getBoard() {
+  getBoard() {
     return this.element;
   }
 
@@ -25,7 +25,7 @@ class GameboardDOM {
 
   // Add a cell element to the gameboard element
   _addCellToBoard(cell) {
-    this._getBoard().append(cell);
+    this.getBoard().append(cell);
   }
 
   // Create grid of cells, based on the grid of the given main gameboard

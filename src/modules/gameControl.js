@@ -34,15 +34,13 @@ class GameController {
   }
 
 
-  // Switch players turns, called after each validated attack
-  _togglePlayersActiveStates() {
-    this.playerOne.active = !this.playerOne.active;
-    this.playerTwo.active = !this.playerTwo.active;
-  }
-
-  // Returns the opponents gameboard
+  // Returns the opponents gameboard so a attack is always placed on the correct gameboard
   _getOpponentGameboard(currentPlayer) {
     return (currentPlayer === this.playerOne) ? this.gameboardTwo : this.gameboardOne;
+  }
+
+  getOpponentGameboardDOM(currentPlayer) {
+    return (currentPlayer === this.playerOne) ? this.gameboardDOMTwo : this.gameboardDOMOne;
   }
 
   // Used in validation functions to check if coordinates fit on the gameboard
@@ -59,6 +57,7 @@ class GameController {
     this.playerTwo.sentAttacks = [];
     this.playerOne.active = true;
     this.playerTwo.active = false;
+    this.playerTwo.isHuman = false;
 
     // Both gameboards begin with no sunken ships
     this.gameboardOne.allShipsSunk = false;
@@ -72,7 +71,7 @@ class GameController {
     this.gameboardDOMOne.clearGameboard();
     this.gameboardDOMTwo.clearGameboard();
 
-    // Players can place new ships
+    // Players can place new ships <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
     // Place new ships after the game is reset
     this.gameboardOne.placeShip(4, 2, 5, 'horizontal');
@@ -84,8 +83,6 @@ class GameController {
 
     // Make the gameboards clickable again
     utilsDOM.enablePointerEvents();
-
-    // Make player one start
 
     // Update color of playernames to visualize who's turn it is (green/red)
     utilsDOM.resetActiveNameClass();
@@ -101,7 +98,7 @@ class GameController {
     validateInput.validateCoordinates(axisX, axisY);
 
     // Check if cell is not already attacked
-    validateInput.validateSentAttacks(curentPlayer, axisX, axisY);
+    if (validateInput.validateSentAttacks(curentPlayer, axisX, axisY) === false) throw new Error('Cell aready attacked!');
 
     // Send validated data to perform the attack
     this._performAttack(axisX, axisY, this._getOpponentGameboard(curentPlayer), cell);
@@ -113,21 +110,27 @@ class GameController {
     // Call opponents gameboard with the attacked coordinates
     targetGameboard.receiveAttack(axisX, axisY);
 
-    // Set the style of the attacked cell
-    utilsDOM.addCellClass(cell);
+    // Set the style of the attacked cell in the DOM to a cross (missed) or a red square (hit)
+    if (cell) utilsDOM.addCellClass(cell);
 
     // Determine if game is over by validating both gameboards on their sunken ships state
     if (utils.isGameOver(this.gameboardOne)) utilsDOM.announceWinner(this.playerTwo);
     if (utils.isGameOver(this.gameboardTwo)) utilsDOM.announceWinner(this.playerOne);
 
-    // Switch players turns after each attack
-    this._togglePlayersActiveStates();
+    // While the game is not over, switch players turns after each attack
+    this.playerOne.toggleActiveState();
+    this.playerTwo.toggleActiveState();
 
     // Update color of playernames to visualize who's turn it is (green/red)
-    utilsDOM.togglePlayerActiveColors();
+    utilsDOM.togglePlayersActiveColors();
+
+    // While the game is not over and it's computers turn, generate a random attack
+    if (this.playerTwo.isHuman === false && this.playerTwo.isActive() === true) {
+      this.playerTwo.generateRandomAttack();
+    }
   }
 
-  // Initialize the game
+  // Initialize the game by setting the player, main gameboard and DOM-gameboard instances as properties in the controller
   startGame(
     playerOne,
     playerTwo,
@@ -149,7 +152,7 @@ class GameController {
     // Set event listeners to the option-buttons
     utilsDOM.activateResetButton(this);
 
-    // Give a option to let player one play againts the computer
+    // Give a option to let player one play against the computer
 
   }
 }
