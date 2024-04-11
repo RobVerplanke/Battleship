@@ -11,6 +11,7 @@
 
 :root{
     --options-holder-heigth: 140px;
+    --default-font: "Tilt Neon", sans-serif;
 
 } 
 
@@ -20,6 +21,7 @@
 html, body {
     background-color: rgb(96, 140, 175);
     min-height: 100vh;
+    font-family: var(--default-font);
 }
 
 header{
@@ -51,9 +53,27 @@ Components
 #options-holder{
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: start;
     height: var(--options-holder-heigth);
     margin: 0 20px 0 20px;
+    padding-top: 20px;
+}
+
+#options-player-one{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    width: 100%;
+}
+
+#options-player-two{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: end;
+    height: 100%;
+    width: 100%;
 }
 
 /* Gameboards */
@@ -106,18 +126,23 @@ Components
     align-items: center;
 
     font-size: 12px;
-    outline: solid 1px lightgray;
+    /* outline: solid 1px lightgray; */
+    border: solid 1px lightgray;
+
     width: 40px;
     height: 40px;
 }
 
 .gridcell-ship{
     z-index: 5;
+    border: solid 1px lightgray;
     background-color: rgb(40, 40, 40);
 }
 
 .gridcell-missed{
     background-color: rgb(96, 140, 175);
+    border: solid 1px lightgray;
+
     font-size: 40px; 
     color: rgb(40, 40, 40);
     font-family: helvetica,arial; 
@@ -175,19 +200,72 @@ Components
 
 /* Buttons */
 
-.reset-button{
+#game-buttons-holder{
     display: flex;
+    flex-direction: column;
+}
+
+.reset-button,
+#newgame-button{
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    width: 100px;
+    height: 30px;
+    color: rgb(40, 40, 40);
+    background-color: lightgray;
+    outline: solid 1px rgb(40, 40, 40);
+    border: none;
+    border-radius: 5px;
+
+    cursor: default;
+    font-size: 1em;
+    font-weight: bold;
+    z-index: 10;
+}
+
+#player-two-computer-button,
+#options-player-one-random-button,
+#options-player-two-random-button{
+    font-size: 12px;
     justify-content: center;
     align-items: center;
     width: 100px;
     height: 30px;
     color: rgb(40, 40, 40);
     background-color: lightgray;
+    outline: solid 1px rgb(40, 40, 40);
     border: none;
-    margin: 20px;
     border-radius: 5px;
 
     cursor: default;
+    font-size: .8em;
     font-weight: bold;
     z-index: 10;
+}
+
+.random-button-enable{
+    display: flex;
+}
+
+.random-button-disable{
+    display: none;
+}
+
+#newgame-button-enable{
+    display: flex;
+}
+
+#newgame-button-disable{
+    display: none;
+}
+
+.computer-button-enable{
+    display: flex;
+}
+
+.computer-button-disable{
+    display: none;
 }

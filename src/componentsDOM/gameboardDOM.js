@@ -29,7 +29,7 @@ class GameboardDOM {
   }
 
   // Create grid of cells, based on the grid of the given main gameboard
-  generateGridCells(gameboard, player) {
+  generateGridCells(gameboard, player, opponent) {
 
     // Create a new cell in the DOM for each grid cell on the main gameboard
     for (let i = this._getBoardSize(); i > 0; i--) {
@@ -48,8 +48,15 @@ class GameboardDOM {
           // Set data-attribute so it can be recognized as ship
           utilsDOM.setCellDataShipAttribute(cell);
 
+          console.log(this.element.id, player.getIsHuman());
+
+          if (this.element.id === 'player-two-gameboard' && !opponent.getIsHuman()) {
           // Add 'ship'-class to highlight players ships
-          utilsDOM.addElementClass(cell, 'gridcell-ship');
+            utilsDOM.addElementClass(cell, 'gridcell');
+          } else {
+            utilsDOM.addElementClass(cell, 'gridcell-ship');
+
+          }
 
         } else { // Grid cell is empty
 

@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tilt+Neon&display=swap" rel="stylesheet">
     <script defer type="text/javascript" src="main.js"></script>
     <title>Battleship game</title>
 </head>
@@ -10,16 +13,28 @@
     <link rel="stylesheet" href="style.css">
 
     <header id="options-holder">
-        <div id="options-player-one">one</div>
-        <div class="reset-button">Reset</div>
-        <div id="options-player-two">two</div>
+        <div id="options-player-one">
+            <div id="options-player-one-name">Player one</div>
+            <div id="options-player-one-random-button" class="random-button-enable">place random</div>
+        </div>
+
+        <div id="game-buttons-holder">
+            <div id="newgame-button">Reset game</div>
+        </div>
+
+        <div id="options-player-two">
+            <div id="options-player-two-name">Player two</div>
+            <div id="player-two-computer-button" class="computer-button-enable">Play against AI</div>
+            <div id="options-player-two-random-button" class="random-button-enable">place random</div>
+        </div>
+        
     </header>
     
     <div id="popup-message" class="disable-popup-message">
         <div id="popup-message-holder">
             <div id="popup-title">Game over!</div>
             <div id="popup-content"></div>
-            <div class="reset-button">Reset</div>
+            <div id="popup-reset-button" class="reset-button">Reset</div>
         </div>
     </div>
 
@@ -29,7 +44,7 @@
             <div id="player-one-gameboard" class="gameboard"></div>
         </div>
         <div id="player-two-gameboard-holder" class="gameboard-holder">
-            <div id="player-two-name" class="player-name player-inactive"></div>
+            <div id="player-two-name" class="player-name player-inactive"></div>          
             <div id="player-two-gameboard" class="gameboard"></div>
         </div>
     </main>

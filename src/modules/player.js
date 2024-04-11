@@ -33,6 +33,15 @@ class Player {
     this.active = !this.active;
   }
 
+  getIsHuman() {
+    return this.isHuman;
+  }
+
+  // Change player from human to computer player
+  setIsHumanState() {
+    this.isHuman = false;
+  }
+
   // Generate a random valid coordinate to attack
   generateRandomAttack() {
     const newCoordinate = [];
@@ -48,6 +57,7 @@ class Player {
     // Add valid coordinate to list
     newCoordinate.push(axisX, axisY);
 
+    // Send valid coordinates to prepare the attack
     this.sendRandomAttack(axisX, axisY);
   }
 
@@ -56,10 +66,10 @@ class Player {
     const opponentGameboard = this.gameControl.getOpponentGameboardDOM(this);
     const cell = utilsDOM.getCellByCoordinate(axisX, axisY, opponentGameboard);
 
-    // setTimeout(() => {
-    this.sendAttack(axisX, axisY, cell);
-    // }, 1000);
-
+    // Give the AI time to think to make it look more like a human opponent
+    setTimeout(() => {
+      this.sendAttack(axisX, axisY, cell);
+    }, 1000);
   }
 
   // Send a attack to a specific grid cell

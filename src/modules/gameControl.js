@@ -43,49 +43,14 @@ class GameController {
     return (currentPlayer === this.playerOne) ? this.gameboardDOMTwo : this.gameboardDOMOne;
   }
 
+  validateGameboardsActiveStates() {
+    if (this.gameboardOne.getActiveState() && this.gameboardTwo.getActiveState()) return true;
+    return false;
+  }
+
   // Used in validation functions to check if coordinates fit on the gameboard
   getBoardSize() {
     return this.boardSize;
-  }
-
-  // After game-over the board can be reset by clearing the stored data in the player and gameboard instances
-  // The gameboard in the DOM will be build again based on the empty main gameboard
-  resetGame() {
-
-    // Remove all previous attacked coordinates and set player one as active player
-    this.playerOne.sentAttacks = [];
-    this.playerTwo.sentAttacks = [];
-    this.playerOne.active = true;
-    this.playerTwo.active = false;
-    this.playerTwo.isHuman = false;
-
-    // Both gameboards begin with no sunken ships
-    this.gameboardOne.allShipsSunk = false;
-    this.gameboardTwo.allShipsSunk = false;
-
-    // Clear all previous placed ships
-    this.gameboardOne.clearGrid();
-    this.gameboardTwo.clearGrid();
-
-    // Clear all content from both gameboards in the DOM otherwise the new gameboard would be added and not replaced
-    this.gameboardDOMOne.clearGameboard();
-    this.gameboardDOMTwo.clearGameboard();
-
-    // Players can place new ships <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-    // Place new ships after the game is reset
-    this.gameboardOne.placeShip(4, 2, 5, 'horizontal');
-    this.gameboardTwo.placeShip(6, 6, 2, 'vertical');
-
-    // Initialize both gameboards in the DOM, based on the new (empty) main gameboards
-    this.gameboardDOMOne.generateGridCells(this.gameboardOne, this.playerTwo);
-    this.gameboardDOMTwo.generateGridCells(this.gameboardTwo, this.playerOne);
-
-    // Make the gameboards clickable again
-    utilsDOM.enablePointerEvents();
-
-    // Update color of playernames to visualize who's turn it is (green/red)
-    utilsDOM.resetActiveNameClass();
   }
 
   // Called when a player clicks a grid cell on the opponents gameboard in the DOM
@@ -93,6 +58,13 @@ class GameController {
 
     // Check if current player is actve
     validateInput.validatePlayerActiveState(curentPlayer);
+
+    // Check if both players placed their ships
+    if (this.validateGameboardsActiveStates() === false) throw new Error('Place ships first');
+
+    // After the game has started, remove the option buttons
+    utilsDOM.disableRandomPlacementButtons();
+    utilsDOM.disableComputerButton();
 
     // Validate coordinate values
     validateInput.validateCoordinates(axisX, axisY);
@@ -102,6 +74,8 @@ class GameController {
 
     // Send validated data to perform the attack
     this._performAttack(axisX, axisY, this._getOpponentGameboard(curentPlayer), cell);
+
+    return true;
   }
 
   // Send the validated coordinates of the attack to the corresponding gameboard
@@ -149,11 +123,14 @@ class GameController {
     // Update player names above the corresponding gameboard
     utilsDOM.updatePlayerNames(this.playerOne.name, this.playerTwo.name);
 
-    // Set event listeners to the option-buttons
-    utilsDOM.activateResetButton(this);
+    // Let player(s) place all ships at valid random positions
+    utilsDOM.activateRandomButton(this);
 
     // Give a option to let player one play against the computer
+    utilsDOM.activateComputerButton(this);
 
+    // Refresh the page when 'new game'-button is pressed
+    utilsDOM.activateResetButtons();
   }
 }
 

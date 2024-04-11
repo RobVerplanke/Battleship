@@ -17,39 +17,9 @@ const gameboardTwo = new Gameboard();
 const gameboardDOMOne = new GameboardDOM('#player-one-gameboard');
 const gameboardDOMTwo = new GameboardDOM('#player-two-gameboard');
 
-/*
-
-Place ships on each board for TESTING!!! *******************************************
-
-*/
-
-
-gameboardOne.placeShip(0, 0, 2, 'horizontal');
-// gameboardOne.placeShip(3, 0, 3, 'vertical');
-// gameboardOne.placeShip(7, 0, 3, 'horizontal');
-// gameboardOne.placeShip(0, 5, 4, 'vertical');
-// gameboardOne.placeShip(5, 6, 5, 'horizontal');
-
-// Plaats schepen op het spelbord
-gameboardTwo.placeShip(0, 0, 2, 'horizontal');
-// gameboardTwo.placeShip(3, 0, 3, 'vertical');
-// gameboardTwo.placeShip(7, 0, 3, 'horizontal');
-// gameboardTwo.placeShip(0, 5, 4, 'vertical');
-// gameboardTwo.placeShip(5, 5, 5, 'horizontal');
-
-
 // Initialize both gameboards in the DOM
-gameboardDOMOne.generateGridCells(gameboardOne, playerTwo);
-gameboardDOMTwo.generateGridCells(gameboardTwo, playerOne);
-
-/*
-
-**************************************************************************************
-
-*/
-
-// Set player two as computer opponent
-playerTwo.isHuman = false;
+gameboardDOMOne.generateGridCells(gameboardOne, playerTwo, playerOne);
+gameboardDOMTwo.generateGridCells(gameboardTwo, playerOne, playerTwo);
 
 // Player one begins
 playerOne.active = true;
